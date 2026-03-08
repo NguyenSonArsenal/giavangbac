@@ -26,7 +26,11 @@ class FetchPhuQuySilverPrice extends Command
 
     public function handle(): int
     {
-        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Bắt đầu fetch giá bạc Phú Quý...');
+        $logFile = storage_path('logs/cron-phuquy.log');
+        $startAt = now()->format('Y-m-d H:i:s');
+        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-phuquy START\n", FILE_APPEND);
+
+        $this->info("[{$startAt}] Bắt đầu fetch giá bạc Phú Quý...");
 
         $success = true;
 
@@ -98,6 +102,9 @@ class FetchPhuQuySilverPrice extends Command
         }
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành.');
+        $endAt = now()->format('Y-m-d H:i:s');
+        $status = $success ? 'DONE ✓' : 'DONE (có lỗi)';
+        file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-phuquy {$status}\n", FILE_APPEND);
         return $success ? Command::SUCCESS : Command::FAILURE;
     }
 

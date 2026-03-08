@@ -22,6 +22,10 @@ class FetchDojiSilverPrice extends Command
 
     public function handle(): int
     {
+        $logFile = storage_path('logs/cron-doji.log');
+        $startAt = now()->format('Y-m-d H:i:s');
+        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-doji START\n", FILE_APPEND);
+
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá bạc DOJI...');
 
         $cacheBuster = now()->timestamp * 1000;

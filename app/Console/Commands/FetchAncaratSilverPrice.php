@@ -31,6 +31,10 @@ class FetchAncaratSilverPrice extends Command
 
     public function handle(): int
     {
+        $logFile = storage_path('logs/cron-ancarat.log');
+        $startAt = now()->format('Y-m-d H:i:s');
+        file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-ancarat START\n", FILE_APPEND);
+
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá bạc Ancarat...');
 
         try {
@@ -118,6 +122,8 @@ class FetchAncaratSilverPrice extends Command
         }
 
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành Ancarat.');
+                $endAt = now()->format('Y-m-d H:i:s');
+        file_put_contents($logFile, "[{$endAt}] ■ silver:fetch-ancarat DONE\n", FILE_APPEND);
         return Command::SUCCESS;
     }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -874,7 +874,7 @@
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             plugins: {
-              legend: { labels: { color: '#909ab2', font: { size: 11, family:'Inter' }, usePointStyle:true, pointStyleWidth:8 } },
+              legend: { labels: { color: '#909ab2', font: { size: 11, family:'Inter' }, usePointStyle:true, pointStyle:'line', pointStyleWidth:20, boxHeight:2 } },
               tooltip: { backgroundColor:'rgba(13,16,24,0.96)', borderColor:'rgba(176,190,197,0.2)', borderWidth:1,
                 titleColor:'#e4e8f2', bodyColor:'#909ab2', padding:10,
                 callbacks: { label: function(ctx){ return ' ' + ctx.dataset.label + ': ' + Number(ctx.raw).toLocaleString('vi-VN') + ' đ'; } }
@@ -976,3 +976,4 @@
 
 </body>
 </html>
+

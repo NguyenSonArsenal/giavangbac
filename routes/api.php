@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\SilverPriceController;
 use App\Http\Controllers\Api\AncaratPriceController;
 use App\Http\Controllers\Api\DojiPriceController;
+use App\Http\Controllers\Api\KimNganPhucPriceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,13 @@ Route::middleware('internal.api')->group(function () {
         Route::get('current', [DojiPriceController::class, 'currentPrice']);
         Route::get('history', [DojiPriceController::class, 'history']);
         Route::get('percent', [DojiPriceController::class, 'percent']);
+    });
+
+    // Silver price – Kim Ngân Phúc
+    Route::prefix('kimnganphuc')->group(function () {
+        Route::get('current', [KimNganPhucPriceController::class, 'currentPrice']);
+        Route::get('history', [KimNganPhucPriceController::class, 'history']);
+        Route::get('percent', [KimNganPhucPriceController::class, 'percent']);
     });
 
 });

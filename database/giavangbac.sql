@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : phpmyadmin
+ Source Server         : giavangbac
  Source Server Type    : MySQL
- Source Server Version : 100432
- Source Host           : localhost:3306
- Source Schema         : giavangbac
+ Source Server Version : 80045
+ Source Host           : 127.0.0.1:3306
+ Source Schema         : db_giavangbac
 
  Target Server Type    : MySQL
- Target Server Version : 100432
+ Target Server Version : 80045
  File Encoding         : 65001
 
- Date: 08/03/2026 14:34:02
+ Date: 09/03/2026 22:12:26
 */
 
 SET NAMES utf8mb4;
@@ -22,15 +22,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `silver_price_history`;
 CREATE TABLE `silver_price_history`  (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL,
   `source` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'phuquy',
   `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'KG | LUONG | CHI',
-  `buy_price` bigint(20) NOT NULL COMMENT 'giá mua (VND)',
-  `sell_price` bigint(20) NOT NULL COMMENT 'giá bán (VND)',
+  `buy_price` bigint(0) NOT NULL COMMENT 'giá mua (VND)',
+  `sell_price` bigint(0) NOT NULL COMMENT 'giá bán (VND)',
   `price_date` date NOT NULL COMMENT 'ngày ghi nhận',
-  `recorded_at` timestamp(0) NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'thời điểm cụ thể',
-  `created_at` timestamp(0) DEFAULT NULL,
-  `updated_at` timestamp(0) DEFAULT NULL,
+  `recorded_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'thời điểm cụ thể',
+  `created_at` timestamp(0) NULL DEFAULT NULL,
+  `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `silver_price_history_source_unit_price_date_index`(`source`, `unit`, `price_date`) USING BTREE,
   INDEX `silver_price_history_source_unit_recorded_at_index`(`source`, `unit`, `recorded_at`) USING BTREE
@@ -1413,21 +1413,109 @@ INSERT INTO `silver_price_history` VALUES (1682, 'doji', 'LUONG', 3239000, 33490
 INSERT INTO `silver_price_history` VALUES (1683, 'doji', 'LUONG', 3179000, 3287000, '2026-03-05', '2026-03-05 18:00:00', '2026-03-08 14:18:57', '2026-03-08 14:18:57');
 INSERT INTO `silver_price_history` VALUES (1684, 'doji', 'LUONG', 3127000, 3233000, '2026-03-06', '2026-03-06 18:00:00', '2026-03-08 14:18:57', '2026-03-08 14:18:57');
 INSERT INTO `silver_price_history` VALUES (1685, 'doji', 'LUONG', 3176000, 3284000, '2026-03-07', '2026-03-07 18:00:00', '2026-03-08 14:18:57', '2026-03-08 14:18:57');
+INSERT INTO `silver_price_history` VALUES (1707, 'phuquy', 'KG', 82746677, 85305900, '2026-03-09', '2026-03-09 09:40:47', '2026-03-09 09:40:47', '2026-03-09 09:40:47');
+INSERT INTO `silver_price_history` VALUES (1708, 'phuquy', 'CHI', 310300, 319900, '2026-03-09', '2026-03-09 09:40:49', '2026-03-09 09:40:49', '2026-03-09 09:40:49');
+INSERT INTO `silver_price_history` VALUES (1709, 'ancarat', 'LUONG', 3097000, 3193000, '2026-03-09', '2026-03-09 09:41:47', '2026-03-09 09:41:47', '2026-03-09 09:41:47');
+INSERT INTO `silver_price_history` VALUES (1710, 'ancarat', 'KG', 82587000, 85147000, '2026-03-09', '2026-03-09 09:41:47', '2026-03-09 09:41:47', '2026-03-09 09:41:47');
+INSERT INTO `silver_price_history` VALUES (1711, 'phuquy', 'KG', 82800010, 85360800, '2026-03-09', '2026-03-09 10:19:35', '2026-03-09 10:19:35', '2026-03-09 10:19:35');
+INSERT INTO `silver_price_history` VALUES (1712, 'phuquy', 'CHI', 310500, 320100, '2026-03-09', '2026-03-09 10:19:36', '2026-03-09 10:19:36', '2026-03-09 10:19:36');
+INSERT INTO `silver_price_history` VALUES (1713, 'ancarat', 'LUONG', 3101000, 3197000, '2026-03-09', '2026-03-09 10:19:37', '2026-03-09 10:19:37', '2026-03-09 10:19:37');
+INSERT INTO `silver_price_history` VALUES (1714, 'ancarat', 'KG', 82693000, 85253000, '2026-03-09', '2026-03-09 10:19:37', '2026-03-09 10:19:37', '2026-03-09 10:19:37');
+INSERT INTO `silver_price_history` VALUES (1715, 'doji', 'LUONG', 3115000, 3221000, '2026-03-09', '2026-03-09 10:19:49', '2026-03-09 10:19:49', '2026-03-09 10:19:49');
+INSERT INTO `silver_price_history` VALUES (1716, 'phuquy', 'KG', 82933344, 85498300, '2026-03-09', '2026-03-09 11:00:05', '2026-03-09 11:00:05', '2026-03-09 11:00:05');
+INSERT INTO `silver_price_history` VALUES (1717, 'phuquy', 'CHI', 311000, 320600, '2026-03-09', '2026-03-09 11:00:06', '2026-03-09 11:00:06', '2026-03-09 11:00:06');
+INSERT INTO `silver_price_history` VALUES (1718, 'ancarat', 'LUONG', 3119000, 3216000, '2026-03-09', '2026-03-09 11:00:07', '2026-03-09 11:00:07', '2026-03-09 11:00:07');
+INSERT INTO `silver_price_history` VALUES (1719, 'ancarat', 'KG', 83173000, 85760000, '2026-03-09', '2026-03-09 11:00:07', '2026-03-09 11:00:07', '2026-03-09 11:00:07');
+INSERT INTO `silver_price_history` VALUES (1720, 'doji', 'LUONG', 3120000, 3226000, '2026-03-09', '2026-03-09 11:00:10', '2026-03-09 11:00:10', '2026-03-09 11:00:10');
+INSERT INTO `silver_price_history` VALUES (1721, 'phuquy', 'KG', 83173344, 85745700, '2026-03-09', '2026-03-09 11:30:04', '2026-03-09 11:30:04', '2026-03-09 11:30:04');
+INSERT INTO `silver_price_history` VALUES (1722, 'phuquy', 'CHI', 311900, 321500, '2026-03-09', '2026-03-09 11:30:06', '2026-03-09 11:30:06', '2026-03-09 11:30:06');
+INSERT INTO `silver_price_history` VALUES (1723, 'ancarat', 'LUONG', 3112000, 3208000, '2026-03-09', '2026-03-09 11:30:07', '2026-03-09 11:30:07', '2026-03-09 11:30:07');
+INSERT INTO `silver_price_history` VALUES (1724, 'ancarat', 'KG', 82987000, 85547000, '2026-03-09', '2026-03-09 11:30:07', '2026-03-09 11:30:07', '2026-03-09 11:30:07');
+INSERT INTO `silver_price_history` VALUES (1725, 'doji', 'LUONG', 3129000, 3235000, '2026-03-09', '2026-03-09 11:30:16', '2026-03-09 11:30:16', '2026-03-09 11:30:16');
+INSERT INTO `silver_price_history` VALUES (1726, 'phuquy', 'KG', 82613344, 85168400, '2026-03-09', '2026-03-09 12:00:04', '2026-03-09 12:00:04', '2026-03-09 12:00:04');
+INSERT INTO `silver_price_history` VALUES (1727, 'phuquy', 'CHI', 309800, 319400, '2026-03-09', '2026-03-09 12:00:05', '2026-03-09 12:00:05', '2026-03-09 12:00:05');
+INSERT INTO `silver_price_history` VALUES (1728, 'ancarat', 'LUONG', 3101000, 3197000, '2026-03-09', '2026-03-09 12:00:07', '2026-03-09 12:00:07', '2026-03-09 12:00:07');
+INSERT INTO `silver_price_history` VALUES (1729, 'ancarat', 'KG', 82693000, 85253000, '2026-03-09', '2026-03-09 12:00:07', '2026-03-09 12:00:07', '2026-03-09 12:00:07');
+INSERT INTO `silver_price_history` VALUES (1730, 'doji', 'LUONG', 3108000, 3214000, '2026-03-09', '2026-03-09 12:00:10', '2026-03-09 12:00:10', '2026-03-09 12:00:10');
+INSERT INTO `silver_price_history` VALUES (1731, 'phuquy', 'KG', 83306677, 85883200, '2026-03-09', '2026-03-09 12:30:04', '2026-03-09 12:30:04', '2026-03-09 12:30:04');
+INSERT INTO `silver_price_history` VALUES (1732, 'phuquy', 'CHI', 312400, 322100, '2026-03-09', '2026-03-09 12:30:05', '2026-03-09 12:30:06', '2026-03-09 12:30:06');
+INSERT INTO `silver_price_history` VALUES (1733, 'ancarat', 'LUONG', 3122000, 3219000, '2026-03-09', '2026-03-09 12:30:07', '2026-03-09 12:30:07', '2026-03-09 12:30:07');
+INSERT INTO `silver_price_history` VALUES (1734, 'ancarat', 'KG', 83253000, 85840000, '2026-03-09', '2026-03-09 12:30:07', '2026-03-09 12:30:07', '2026-03-09 12:30:07');
+INSERT INTO `silver_price_history` VALUES (1735, 'doji', 'LUONG', 3134000, 3241000, '2026-03-09', '2026-03-09 12:30:09', '2026-03-09 12:30:09', '2026-03-09 12:30:09');
+INSERT INTO `silver_price_history` VALUES (1736, 'phuquy', 'KG', 84213344, 86817900, '2026-03-09', '2026-03-09 13:00:04', '2026-03-09 13:00:04', '2026-03-09 13:00:04');
+INSERT INTO `silver_price_history` VALUES (1737, 'phuquy', 'CHI', 315800, 325600, '2026-03-09', '2026-03-09 13:00:05', '2026-03-09 13:00:05', '2026-03-09 13:00:05');
+INSERT INTO `silver_price_history` VALUES (1738, 'ancarat', 'LUONG', 3166000, 3264000, '2026-03-09', '2026-03-09 13:00:07', '2026-03-09 13:00:07', '2026-03-09 13:00:07');
+INSERT INTO `silver_price_history` VALUES (1739, 'ancarat', 'KG', 84427000, 87040000, '2026-03-09', '2026-03-09 13:00:07', '2026-03-09 13:00:07', '2026-03-09 13:00:07');
+INSERT INTO `silver_price_history` VALUES (1740, 'doji', 'LUONG', 3168000, 3276000, '2026-03-09', '2026-03-09 13:00:09', '2026-03-09 13:00:09', '2026-03-09 13:00:09');
+INSERT INTO `silver_price_history` VALUES (1741, 'phuquy', 'KG', 84773344, 87395200, '2026-03-09', '2026-03-09 13:30:05', '2026-03-09 13:30:05', '2026-03-09 13:30:05');
+INSERT INTO `silver_price_history` VALUES (1742, 'phuquy', 'CHI', 317900, 327700, '2026-03-09', '2026-03-09 13:30:06', '2026-03-09 13:30:06', '2026-03-09 13:30:06');
+INSERT INTO `silver_price_history` VALUES (1743, 'ancarat', 'LUONG', 3164000, 3262000, '2026-03-09', '2026-03-09 13:30:07', '2026-03-09 13:30:07', '2026-03-09 13:30:07');
+INSERT INTO `silver_price_history` VALUES (1744, 'ancarat', 'KG', 84373000, 86987000, '2026-03-09', '2026-03-09 13:30:07', '2026-03-09 13:30:07', '2026-03-09 13:30:07');
+INSERT INTO `silver_price_history` VALUES (1745, 'doji', 'LUONG', 3189000, 3297000, '2026-03-09', '2026-03-09 13:30:09', '2026-03-09 13:30:09', '2026-03-09 13:30:09');
+INSERT INTO `silver_price_history` VALUES (1746, 'phuquy', 'KG', 83893344, 86488000, '2026-03-09', '2026-03-09 14:00:04', '2026-03-09 14:00:04', '2026-03-09 14:00:04');
+INSERT INTO `silver_price_history` VALUES (1747, 'phuquy', 'CHI', 314600, 324300, '2026-03-09', '2026-03-09 14:00:05', '2026-03-09 14:00:05', '2026-03-09 14:00:05');
+INSERT INTO `silver_price_history` VALUES (1748, 'ancarat', 'LUONG', 3139000, 3236000, '2026-03-09', '2026-03-09 14:00:06', '2026-03-09 14:00:06', '2026-03-09 14:00:06');
+INSERT INTO `silver_price_history` VALUES (1749, 'ancarat', 'KG', 83707000, 86293000, '2026-03-09', '2026-03-09 14:00:06', '2026-03-09 14:00:06', '2026-03-09 14:00:06');
+INSERT INTO `silver_price_history` VALUES (1750, 'doji', 'LUONG', 3156000, 3263000, '2026-03-09', '2026-03-09 14:00:09', '2026-03-09 14:00:09', '2026-03-09 14:00:09');
+INSERT INTO `silver_price_history` VALUES (1751, 'phuquy', 'KG', 83253344, 85828200, '2026-03-09', '2026-03-09 14:30:04', '2026-03-09 14:30:04', '2026-03-09 14:30:04');
+INSERT INTO `silver_price_history` VALUES (1752, 'phuquy', 'CHI', 312200, 321900, '2026-03-09', '2026-03-09 14:30:05', '2026-03-09 14:30:05', '2026-03-09 14:30:05');
+INSERT INTO `silver_price_history` VALUES (1753, 'ancarat', 'LUONG', 3128000, 3225000, '2026-03-09', '2026-03-09 14:30:06', '2026-03-09 14:30:06', '2026-03-09 14:30:06');
+INSERT INTO `silver_price_history` VALUES (1754, 'ancarat', 'KG', 83413000, 86000000, '2026-03-09', '2026-03-09 14:30:06', '2026-03-09 14:30:06', '2026-03-09 14:30:06');
+INSERT INTO `silver_price_history` VALUES (1755, 'doji', 'LUONG', 3132000, 3239000, '2026-03-09', '2026-03-09 14:30:09', '2026-03-09 14:30:09', '2026-03-09 14:30:09');
+INSERT INTO `silver_price_history` VALUES (1756, 'phuquy', 'KG', 83253344, 85828200, '2026-03-09', '2026-03-09 15:00:04', '2026-03-09 15:00:04', '2026-03-09 15:00:04');
+INSERT INTO `silver_price_history` VALUES (1757, 'phuquy', 'CHI', 312200, 321900, '2026-03-09', '2026-03-09 15:00:05', '2026-03-09 15:00:05', '2026-03-09 15:00:05');
+INSERT INTO `silver_price_history` VALUES (1758, 'ancarat', 'LUONG', 3122000, 3219000, '2026-03-09', '2026-03-09 15:00:07', '2026-03-09 15:00:07', '2026-03-09 15:00:07');
+INSERT INTO `silver_price_history` VALUES (1759, 'ancarat', 'KG', 83253000, 85840000, '2026-03-09', '2026-03-09 15:00:07', '2026-03-09 15:00:07', '2026-03-09 15:00:07');
+INSERT INTO `silver_price_history` VALUES (1760, 'doji', 'LUONG', 3132000, 3239000, '2026-03-09', '2026-03-09 15:00:11', '2026-03-09 15:00:11', '2026-03-09 15:00:11');
+INSERT INTO `silver_price_history` VALUES (1761, 'phuquy', 'KG', 83733344, 86323000, '2026-03-09', '2026-03-09 15:30:04', '2026-03-09 15:30:04', '2026-03-09 15:30:04');
+INSERT INTO `silver_price_history` VALUES (1762, 'phuquy', 'CHI', 314000, 323700, '2026-03-09', '2026-03-09 15:30:05', '2026-03-09 15:30:05', '2026-03-09 15:30:05');
+INSERT INTO `silver_price_history` VALUES (1763, 'ancarat', 'LUONG', 3126000, 3223000, '2026-03-09', '2026-03-09 15:30:06', '2026-03-09 15:30:06', '2026-03-09 15:30:06');
+INSERT INTO `silver_price_history` VALUES (1764, 'ancarat', 'KG', 83360000, 85947000, '2026-03-09', '2026-03-09 15:30:07', '2026-03-09 15:30:07', '2026-03-09 15:30:07');
+INSERT INTO `silver_price_history` VALUES (1765, 'doji', 'LUONG', 3150000, 3257000, '2026-03-09', '2026-03-09 15:30:09', '2026-03-09 15:30:09', '2026-03-09 15:30:09');
+INSERT INTO `silver_price_history` VALUES (1766, 'phuquy', 'KG', 83680010, 86268100, '2026-03-09', '2026-03-09 16:00:04', '2026-03-09 16:00:04', '2026-03-09 16:00:04');
+INSERT INTO `silver_price_history` VALUES (1767, 'phuquy', 'CHI', 313800, 323500, '2026-03-09', '2026-03-09 16:00:05', '2026-03-09 16:00:05', '2026-03-09 16:00:05');
+INSERT INTO `silver_price_history` VALUES (1768, 'ancarat', 'LUONG', 3139000, 3236000, '2026-03-09', '2026-03-09 16:00:06', '2026-03-09 16:00:06', '2026-03-09 16:00:06');
+INSERT INTO `silver_price_history` VALUES (1769, 'ancarat', 'KG', 83707000, 86293000, '2026-03-09', '2026-03-09 16:00:06', '2026-03-09 16:00:06', '2026-03-09 16:00:06');
+INSERT INTO `silver_price_history` VALUES (1770, 'doji', 'LUONG', 3148000, 3255000, '2026-03-09', '2026-03-09 16:00:09', '2026-03-09 16:00:09', '2026-03-09 16:00:09');
+INSERT INTO `silver_price_history` VALUES (1771, 'phuquy', 'KG', 84160011, 86762900, '2026-03-09', '2026-03-09 16:30:04', '2026-03-09 16:30:04', '2026-03-09 16:30:04');
+INSERT INTO `silver_price_history` VALUES (1772, 'phuquy', 'CHI', 315600, 325400, '2026-03-09', '2026-03-09 16:30:05', '2026-03-09 16:30:05', '2026-03-09 16:30:05');
+INSERT INTO `silver_price_history` VALUES (1773, 'ancarat', 'LUONG', 3149000, 3247000, '2026-03-09', '2026-03-09 16:30:06', '2026-03-09 16:30:06', '2026-03-09 16:30:06');
+INSERT INTO `silver_price_history` VALUES (1774, 'ancarat', 'KG', 83973000, 86587000, '2026-03-09', '2026-03-09 16:30:06', '2026-03-09 16:30:06', '2026-03-09 16:30:06');
+INSERT INTO `silver_price_history` VALUES (1775, 'doji', 'LUONG', 3166000, 3274000, '2026-03-09', '2026-03-09 16:30:08', '2026-03-09 16:30:08', '2026-03-09 16:30:08');
+INSERT INTO `silver_price_history` VALUES (1776, 'phuquy', 'KG', 83920010, 86515500, '2026-03-09', '2026-03-09 17:00:05', '2026-03-09 17:00:05', '2026-03-09 17:00:05');
+INSERT INTO `silver_price_history` VALUES (1777, 'phuquy', 'CHI', 314700, 324400, '2026-03-09', '2026-03-09 17:00:06', '2026-03-09 17:00:06', '2026-03-09 17:00:06');
+INSERT INTO `silver_price_history` VALUES (1778, 'ancarat', 'LUONG', 3143000, 3240000, '2026-03-09', '2026-03-09 17:00:07', '2026-03-09 17:00:07', '2026-03-09 17:00:07');
+INSERT INTO `silver_price_history` VALUES (1779, 'ancarat', 'KG', 83813000, 86400000, '2026-03-09', '2026-03-09 17:00:07', '2026-03-09 17:00:07', '2026-03-09 17:00:07');
+INSERT INTO `silver_price_history` VALUES (1780, 'doji', 'LUONG', 3157000, 3264000, '2026-03-09', '2026-03-09 17:00:09', '2026-03-09 17:00:09', '2026-03-09 17:00:09');
+INSERT INTO `silver_price_history` VALUES (1781, 'phuquy', 'KG', 84053344, 86652900, '2026-03-09', '2026-03-09 17:30:04', '2026-03-09 17:30:04', '2026-03-09 17:30:04');
+INSERT INTO `silver_price_history` VALUES (1782, 'phuquy', 'CHI', 315200, 324900, '2026-03-09', '2026-03-09 17:30:05', '2026-03-09 17:30:05', '2026-03-09 17:30:05');
+INSERT INTO `silver_price_history` VALUES (1783, 'ancarat', 'LUONG', 3145000, 3242000, '2026-03-09', '2026-03-09 17:30:06', '2026-03-09 17:30:06', '2026-03-09 17:30:06');
+INSERT INTO `silver_price_history` VALUES (1784, 'ancarat', 'KG', 83867000, 86453000, '2026-03-09', '2026-03-09 17:30:06', '2026-03-09 17:30:06', '2026-03-09 17:30:06');
+INSERT INTO `silver_price_history` VALUES (1785, 'doji', 'LUONG', 3162000, 3269000, '2026-03-09', '2026-03-09 17:30:09', '2026-03-09 17:30:09', '2026-03-09 17:30:09');
+INSERT INTO `silver_price_history` VALUES (1786, 'phuquy', 'KG', 83306677, 85883200, '2026-03-09', '2026-03-09 18:00:02', '2026-03-09 18:00:02', '2026-03-09 18:00:02');
+INSERT INTO `silver_price_history` VALUES (1787, 'phuquy', 'CHI', 312400, 322100, '2026-03-09', '2026-03-09 18:00:03', '2026-03-09 18:00:03', '2026-03-09 18:00:03');
+INSERT INTO `silver_price_history` VALUES (1788, 'ancarat', 'LUONG', 3121000, 3218000, '2026-03-09', '2026-03-09 18:00:03', '2026-03-09 18:00:03', '2026-03-09 18:00:03');
+INSERT INTO `silver_price_history` VALUES (1789, 'ancarat', 'KG', 83227000, 85813000, '2026-03-09', '2026-03-09 18:00:04', '2026-03-09 18:00:04', '2026-03-09 18:00:04');
+INSERT INTO `silver_price_history` VALUES (1790, 'doji', 'LUONG', 3134000, 3241000, '2026-03-09', '2026-03-09 18:00:07', '2026-03-09 18:00:07', '2026-03-09 18:00:07');
+INSERT INTO `silver_price_history` VALUES (1791, 'ancarat', 'LUONG', 3113000, 3209000, '2026-03-09', '2026-03-09 18:30:04', '2026-03-09 18:30:04', '2026-03-09 18:30:04');
+INSERT INTO `silver_price_history` VALUES (1792, 'ancarat', 'KG', 83013000, 85573000, '2026-03-09', '2026-03-09 18:30:04', '2026-03-09 18:30:04', '2026-03-09 18:30:04');
+INSERT INTO `silver_price_history` VALUES (1793, 'ancarat', 'LUONG', 3121000, 3218000, '2026-03-09', '2026-03-09 19:00:04', '2026-03-09 19:00:04', '2026-03-09 19:00:04');
+INSERT INTO `silver_price_history` VALUES (1794, 'ancarat', 'KG', 83227000, 85813000, '2026-03-09', '2026-03-09 19:00:04', '2026-03-09 19:00:04', '2026-03-09 19:00:04');
 
 -- ----------------------------
 -- Table structure for silver_prices
 -- ----------------------------
 DROP TABLE IF EXISTS `silver_prices`;
 CREATE TABLE `silver_prices`  (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL,
   `source` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'phuquy' COMMENT 'nguồn dữ liệu',
   `product_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'tên sản phẩm',
   `unit` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'CHI | LUONG | KG',
-  `buy_price` bigint(20) NOT NULL COMMENT 'giá mua (VND)',
-  `sell_price` bigint(20) NOT NULL COMMENT 'giá bán (VND)',
-  `recorded_at` timestamp(0) NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'thời điểm ghi nhận',
-  `created_at` timestamp(0) DEFAULT NULL,
-  `updated_at` timestamp(0) DEFAULT NULL,
+  `buy_price` bigint(0) NOT NULL COMMENT 'giá mua (VND)',
+  `sell_price` bigint(0) NOT NULL COMMENT 'giá bán (VND)',
+  `recorded_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP(0) COMMENT 'thời điểm ghi nhận',
+  `created_at` timestamp(0) NULL DEFAULT NULL,
+  `updated_at` timestamp(0) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `uq_source_unit`(`source`, `unit`) USING BTREE,
   INDEX `silver_prices_source_unit_index`(`source`, `unit`) USING BTREE
@@ -1436,12 +1524,12 @@ CREATE TABLE `silver_prices`  (
 -- ----------------------------
 -- Records of silver_prices
 -- ----------------------------
-INSERT INTO `silver_prices` VALUES (1, 'phuquy', 'Bạc 999 Phú Quý (Chỉ)', 'CHI', 316600, 326400, '2026-03-08 13:40:01', '2026-03-08 13:40:01', '2026-03-08 13:40:01');
-INSERT INTO `silver_prices` VALUES (3, 'phuquy', 'Bạc 999 Phú Quý (Kilogram)', 'KG', 84426456, 87039782, '2026-03-08 13:40:02', '2026-03-08 13:40:02', '2026-03-08 13:40:02');
-INSERT INTO `silver_prices` VALUES (4, 'ancarat', 'Ngân Long Quảng Tiến 999 - 1 lượng', 'LUONG_A4', 3165000, 3263000, '2026-03-08 14:10:19', '2026-03-08 14:10:19', '2026-03-08 14:10:19');
-INSERT INTO `silver_prices` VALUES (5, 'ancarat', 'Ngân Long Quảng Tiến 999 - 1 Kilo', 'KG_K4', 84400000, 87013000, '2026-03-08 14:10:19', '2026-03-08 14:10:19', '2026-03-08 14:10:19');
-INSERT INTO `silver_prices` VALUES (6, 'ancarat', 'Bắc Sư Tử 999 - 1 lượng', 'LUONG_A5', 3165000, 3263000, '2026-03-08 14:10:19', '2026-03-08 14:10:19', '2026-03-08 14:10:19');
-INSERT INTO `silver_prices` VALUES (7, 'ancarat', '2025 Year of Snake 1 lượng 999 Silver Coin', 'LUONG_A6', 3165000, 3263000, '2026-03-08 14:10:19', '2026-03-08 14:10:19', '2026-03-08 14:10:19');
-INSERT INTO `silver_prices` VALUES (8, 'doji', 'BẠC DOJI 99.9 - 1 LƯỢNG', 'LUONG', 3176000, 3284000, '2026-03-08 14:18:45', '2026-03-08 14:18:45', '2026-03-08 14:18:45');
+INSERT INTO `silver_prices` VALUES (4, 'ancarat', 'Ngân Long Quảng Tiến 999 - 1 lượng', 'LUONG_A4', 3145000, 3242000, '2026-03-09 17:30:05', '2026-03-08 14:10:19', '2026-03-09 17:30:05');
+INSERT INTO `silver_prices` VALUES (5, 'ancarat', 'Ngân Long Quảng Tiến 999 - 1 Kilo', 'KG_K4', 83867000, 86453000, '2026-03-09 17:30:06', '2026-03-08 14:10:19', '2026-03-09 17:30:06');
+INSERT INTO `silver_prices` VALUES (6, 'ancarat', 'Bắc Sư Tử 999 - 1 lượng', 'LUONG_A5', 3145000, 3242000, '2026-03-09 17:30:06', '2026-03-08 14:10:19', '2026-03-09 17:30:06');
+INSERT INTO `silver_prices` VALUES (7, 'ancarat', '2025 Year of Snake 1 lượng 999 Silver Coin', 'LUONG_A6', 3145000, 3242000, '2026-03-09 17:30:06', '2026-03-08 14:10:19', '2026-03-09 17:30:06');
+INSERT INTO `silver_prices` VALUES (8, 'doji', 'BẠC DOJI 99.9 - 1 LƯỢNG', 'LUONG', 3162000, 3269000, '2026-03-09 17:30:09', '2026-03-08 14:18:45', '2026-03-09 17:30:09');
+INSERT INTO `silver_prices` VALUES (10, 'phuquy', 'Bạc 999 Phú Quý (Chỉ)', 'CHI', 315200, 324900, '2026-03-09 17:30:01', '2026-03-09 00:34:19', '2026-03-09 17:30:01');
+INSERT INTO `silver_prices` VALUES (11, 'phuquy', 'Bạc 999 Phú Quý (Kilogram)', 'KG', 84053123, 86639783, '2026-03-09 17:30:03', '2026-03-09 00:34:20', '2026-03-09 17:30:03');
 
 SET FOREIGN_KEY_CHECKS = 1;

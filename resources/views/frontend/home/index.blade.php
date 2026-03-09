@@ -336,7 +336,7 @@
     /* Brand cards grid */
     .sv-brands-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       margin-bottom: 14px;
     }
@@ -644,7 +644,7 @@
       </div>
     </div>
 
-    <!-- 3 Brand Cards -->
+    <!-- 4 Brand Cards -->
     <div class="sv-brands-grid">
 
       <!-- Phú Quý -->
@@ -729,6 +729,34 @@
         <div class="sv-card-pct-days" id="dj-pct-days">7 ngày</div>
       </div>
 
+
+      <!-- Kim Ngân Phúc -->
+      <div class="sv-brand-card" id="sv-card-kimnganphuc" data-brand="kimnganphuc">
+        <div class="sv-card-head">
+          <div class="sv-card-logo" style="background:linear-gradient(135deg,#a78bfa,#7c3aed)">KNP</div>
+          <div class="sv-card-info">
+            <div class="sv-card-name">Bạc 999  Kim Ngân Phúc</div>
+            <div class="sv-card-sub" id="knp-updated">Đang tải...</div>
+          </div>
+        </div>
+        <div class="sv-card-tabs">
+          <button class="sv-tab active" data-brand="kimnganphuc" data-unit="KG"    data-mult="1">KG</button>
+          <button class="sv-tab"        data-brand="kimnganphuc" data-unit="LUONG" data-mult="1">Lượng</button>
+        </div>
+        <div class="sv-card-prices">
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Mua vào</div>
+            <div class="sv-cprice-buy" id="knp-buy"></div>
+          </div>
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Bán ra</div>
+            <div class="sv-cprice-sell" id="knp-sell"></div>
+          </div>
+          <div class="sv-card-pct" id="knp-pct">–</div>
+        </div>
+        <div class="sv-card-pct-days" id="knp-pct-days">7 ngày</div>
+      </div>
+
     </div><!-- /sv-brands-grid -->
 
     <!-- Shared Chart -->
@@ -738,6 +766,7 @@
           <button class="sv-chart-brand active" data-brand="phuquy">Phú Quý</button>
           <button class="sv-chart-brand" data-brand="ancarat">Ancarat</button>
           <button class="sv-chart-brand" data-brand="doji">DOJI</button>
+          <button class="sv-chart-brand" data-brand="kimnganphuc">Kim Ngân Phúc</button>
         </div>
         <div class="sv-chart-period-tabs">
           <button class="sv-prd active" data-days="1">1D</button>
@@ -779,13 +808,14 @@
     phuquy:  { current: '/api/silver/current',  history: '/api/silver/history',  percent: '/api/silver/percent'  },
     ancarat: { current: '/api/ancarat/current', history: '/api/ancarat/history', percent: '/api/ancarat/percent' },
     doji:    { current: '/api/doji/current',    history: '/api/doji/history',    percent: '/api/doji/percent'    },
+    kimnganphuc: { current: '/api/kimnganphuc/current', history: '/api/kimnganphuc/history', percent: '/api/kimnganphuc/percent' },
   };
 
   // Active state
   let activeBrand = 'phuquy';
   let activePeriod = 1;
-  const brandUnit = { phuquy: 'CHI', ancarat: 'LUONG', doji: 'LUONG' };
-  const brandMult = { phuquy: 1, ancarat: 1, doji: 1 };
+  const brandUnit = { phuquy: 'CHI', ancarat: 'LUONG', doji: 'LUONG', kimnganphuc: 'KG' };
+  const brandMult = { phuquy: 1, ancarat: 1, doji: 1, kimnganphuc: 1 };
 
   let sharedChart = null;
 
@@ -796,6 +826,7 @@
     phuquy:  { buy: 'pq-buy',  sell: 'pq-sell',  updated: 'pq-updated',  pct: 'pq-pct',  pctDays: 'pq-pct-days'  },
     ancarat: { buy: 'ac-buy',  sell: 'ac-sell',  updated: 'ac-updated',  pct: 'ac-pct',  pctDays: 'ac-pct-days'  },
     doji:    { buy: 'dj-buy',  sell: 'dj-sell',  updated: 'dj-updated',  pct: 'dj-pct',  pctDays: 'dj-pct-days'  },
+    kimnganphuc: { buy: 'knp-buy', sell: 'knp-sell', updated: 'knp-updated', pct: 'knp-pct', pctDays: 'knp-pct-days' },
   };
 
   /* ── Load current price for one brand ── */
@@ -898,7 +929,7 @@
 
   /* ── Load all current prices ── */
   function loadAllPrices() {
-    ['phuquy','ancarat','doji'].forEach(function(b) {
+    ['phuquy','ancarat','doji','kimnganphuc'].forEach(function(b) {
       loadBrandPrice(b);
       loadBrandPct(b, activePeriod);
     });
@@ -957,7 +988,7 @@
       btn.classList.add('active');
       activePeriod = parseInt(btn.dataset.days);
       // Reload all pct + chart
-      ['phuquy','ancarat','doji'].forEach(function(b){ loadBrandPct(b, activePeriod); });
+      ['phuquy','ancarat','doji','kimnganphuc'].forEach(function(b){ loadBrandPct(b, activePeriod); });
       loadSharedChart();
     });
   });

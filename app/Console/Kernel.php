@@ -11,6 +11,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchPhuQuySilverPrice::class,
 		\App\Console\Commands\FetchAncaratSilverPrice::class,
 		\App\Console\Commands\FetchDojiSilverPrice::class,
+		\App\Console\Commands\FetchKimNganPhucSilverPrice::class,
 	];
 
 	/**
@@ -21,9 +22,32 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('silver:fetch-phuquy')->everyThirtyMinutes()->withoutOverlapping();;
-        $schedule->command('silver:fetch-ancarat')->everyThirtyMinutes()->withoutOverlapping();;
-        $schedule->command('silver:fetch-doji')->everyThirtyMinutes()->withoutOverlapping();;
+        // ── Phú Quý, Ancarat, DOJI ──────────────────────────────────────────
+        // T2-T6: 8h–19h, mỗi 10 phút
+        // T7   : 8h–10h, mỗi 10 phút
+        // CN   : không chạy
+        foreach (['silver:fetch-phuquy', 'silver:fetch-ancarat', 'silver:fetch-doji'] as $cmd) {
+            // Thứ 2 → Thứ 6: 8:00 – 19:00
+            $schedule->command($cmd)
+                ->everyTenMinutes()
+                ->weekdays()
+                ->between('8:00', '19:00')
+                ->withoutOverlapping();
+
+            // Thứ 7: 8:00 – 10:00
+            $schedule->command($cmd)
+                ->everyTenMinutes()
+                ->saturdays()
+                ->between('8:00', '10:00')
+                ->withoutOverlapping();
+        }
+
+        // ── Kim Ngân Phúc ────────────────────────────────────────────────────
+        // Hàng ngày (T2–CN): 8h–19h, mỗi 10 phút
+        $schedule->command('silver:fetch-kimnganphuc')
+            ->everyTenMinutes()
+            ->between('8:00', '19:00')
+            ->withoutOverlapping();
     }
 
     /**

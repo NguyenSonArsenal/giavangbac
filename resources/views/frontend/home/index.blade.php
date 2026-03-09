@@ -334,14 +334,30 @@
     .sv-section-head p  { font-size:11.5px; color:var(--muted); margin:2px 0 0; }
 
     /* Brand cards grid */
+    /* Layout 2 cột: brands trái | chart phải */
+    .sv-main-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    @media (max-width:1100px) {
+      .sv-main-layout { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width:840px) {
+      .sv-main-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Grid items: prevent overflow */
+    .sv-main-layout > * { min-width: 0; }
+
     .sv-brands-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      margin-bottom: 14px;
+      gap: 10px;
     }
-    @media (max-width:900px) {
-      .sv-brands-grid { grid-template-columns:1fr; }
+    @media (max-width:840px) {
+      .sv-brands-grid { grid-template-columns: 1fr; }
     }
 
     .sv-brand-card {
@@ -456,7 +472,7 @@
     }
     .sv-shared-canvas-wrap {
       padding:12px 16px 16px;
-      position:relative; height:320px;
+      position:relative; flex:1; min-height:260px;
     }
     .sv-shared-canvas-wrap canvas { width:100%!important; height:100%!important; }
 
@@ -644,6 +660,7 @@
       </div>
     </div>
 
+    <div class="sv-main-layout">
     <!-- 4 Brand Cards -->
     <div class="sv-brands-grid">
 
@@ -785,6 +802,7 @@
       </div>
     </div>
 
+    </div><!-- /sv-main-layout -->
     <p class="sv-footnote">⚠️ Giá tham khảo · Xác nhận từ nguồn chính thức trước khi giao dịch · © 2026 GiáVàng.vn</p>
 
   </section>

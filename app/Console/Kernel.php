@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchAncaratSilverPrice::class,
 		\App\Console\Commands\FetchDojiSilverPrice::class,
 		\App\Console\Commands\FetchKimNganPhucSilverPrice::class,
+		\App\Console\Commands\FetchAllSilverPrice::class,
 	];
 
 	/**

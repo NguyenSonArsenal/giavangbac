@@ -54,158 +54,6 @@
         radial-gradient(ellipse 60% 40% at 85% 90%, rgba(245,197,24,0.05) 0%, transparent 60%);
     }
 
-    /* HEADER */
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(7,9,15,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px; height: 60px;
-      display: flex; align-items: center; gap: 24px;
-    }
-
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon {
-      width: 34px; height: 34px;
-      background: linear-gradient(135deg, var(--gold), #c8820a);
-      border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; font-size: 16px; font-weight: 900;
-      color: #07090f; box-shadow: 0 0 18px rgba(245,197,24,0.4);
-    }
-    .logo-text {
-      font-size: 20px; font-weight: 800;
-      background: linear-gradient(90deg, var(--gold2), var(--gold));
-      -webkit-background-clip: text; background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .logo-text span { -webkit-text-fill-color: var(--muted); font-weight: 400; font-size: 13px; }
-
-    .header-tag {
-      font-size: 12px; color: var(--muted);
-      display: flex; align-items: center; gap: 6px;
-    }
-
-    /* ── NAV ── */
-    .header-nav {
-      display: flex; align-items: center; gap: 4px;
-      margin-left: 20px;
-    }
-    .nav-link {
-      font-size: 13px; font-weight: 500; color: var(--muted2);
-      text-decoration: none; padding: 6px 12px; border-radius: 7px;
-      transition: color .18s, background .18s;
-      white-space: nowrap;
-    }
-    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-link.active { color: var(--gold2); }
-
-    /* Dropdown */
-    .nav-dropdown { position: relative; }
-    .nav-dropdown-toggle {
-      font-size: 13px; font-weight: 500; color: var(--muted2);
-      padding: 6px 12px; border-radius: 7px; cursor: pointer;
-      display: flex; align-items: center; gap: 5px;
-      transition: color .18s, background .18s;
-      user-select: none;
-    }
-    .nav-dropdown-toggle:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-caret { font-size: 10px; transition: transform .2s; }
-    .nav-dropdown.open .nav-caret { transform: rotate(180deg); }
-    .nav-dropdown-menu {
-      position: absolute; top: calc(100% + 8px); left: 0;
-      background: #0d1018; border: 1px solid var(--border2);
-      border-radius: var(--radius-sm); padding: 6px;
-      min-width: 200px; z-index: 200;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      display: none;
-    }
-    .nav-dropdown.open .nav-dropdown-menu { display: block; }
-    .nav-dropdown-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border-radius: 6px;
-      text-decoration: none; color: var(--text2); font-size: 13px; font-weight: 500;
-      transition: background .15s;
-    }
-    .nav-dropdown-item:hover { background: rgba(255,255,255,0.06); color: var(--text); }
-    .nav-dropdown-icon {
-      width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 13px;
-    }
-    .nav-dropdown-sub { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
-
-    /* Mobile hamburger */
-    .nav-toggle {
-      display: none; flex-direction: column; gap: 5px;
-      cursor: pointer; padding: 8px; margin-left: auto;
-      background: none; border: none;
-    }
-    .nav-toggle span {
-      display: block; width: 22px; height: 2px;
-      background: var(--muted2); border-radius: 2px;
-      transition: all .25s;
-    }
-    @media (max-width: 768px) {
-      .header-nav  { display: none; }
-      .nav-toggle  { display: flex; }
-      .header-tag  { display: none; }
-      header { padding: 0 16px; }
-    }
-
-    /* Mobile drawer */
-    .nav-drawer {
-      position: fixed; inset: 0; z-index: 300;
-      pointer-events: none;
-    }
-    .nav-drawer-overlay {
-      position: absolute; inset: 0;
-      background: rgba(0,0,0,0); transition: background .3s;
-    }
-    .nav-drawer-panel {
-      position: absolute; top: 0; right: 0; bottom: 0;
-      width: 260px; background: #0d1018;
-      border-left: 1px solid var(--border2);
-      padding: 20px 16px;
-      transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
-      overflow-y: auto;
-    }
-    .nav-drawer.open { pointer-events: all; }
-    .nav-drawer.open .nav-drawer-overlay { background: rgba(0,0,0,0.55); }
-    .nav-drawer.open .nav-drawer-panel   { transform: translateX(0); }
-    .drawer-close {
-      display: flex; justify-content: flex-end; margin-bottom: 20px;
-    }
-    .drawer-close button {
-      background: none; border: none; color: var(--muted2);
-      font-size: 22px; cursor: pointer; line-height: 1;
-    }
-    .drawer-link {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 10px; border-radius: 8px;
-      text-decoration: none; color: var(--text2); font-size: 14px; font-weight: 500;
-      transition: background .15s;
-      margin-bottom: 2px;
-    }
-    .drawer-link:hover { background: rgba(255,255,255,0.05); color: var(--text); }
-    .drawer-divider {
-      font-size: 10px; text-transform: uppercase; letter-spacing: .1em;
-      color: var(--muted); padding: 12px 10px 6px;
-    }
-    .drawer-icon {
-      width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center; font-size: 14px;
-    }
-
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--green); box-shadow: 0 0 8px var(--green);
-      animation: blink 1.3s infinite; flex-shrink: 0;
-    }
-
-    @keyframes blink {
-      0%,100% { opacity:1; box-shadow: 0 0 8px var(--green); }
-      50%      { opacity:0.3; box-shadow:none; }
-    }
-
     /* MAIN */
     main {
       position: relative; z-index: 1;
@@ -693,96 +541,14 @@
 <body>
 <div class="bg-glow"></div>
 
-<!-- HEADER -->
-<header>
-  <a href="/" class="logo">
-    <div class="logo-icon">G</div>
-    <div class="logo-text">GiáVàng<span>.vn</span></div>
-  </a>
-
-  {{-- Desktop Nav --}}
-  <nav class="header-nav">
-    <a href="/" class="nav-link active">Trang Chủ</a>
-
-    <div class="nav-dropdown" id="nav-bac">
-      <div class="nav-dropdown-toggle">
-        🥈 Giá Bạc <span class="nav-caret">▾</span>
-      </div>
-      <div class="nav-dropdown-menu">
-        <a href="/gia-bac-phu-quy" class="nav-dropdown-item">
-          <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#b0bec5,#546e7a)">🥈</div>
-          <div><div>Phú Quý 999</div><div class="nav-dropdown-sub">giá bạc phú quý hôm nay</div></div>
-        </a>
-        <a href="/gia-bac-ancarat" class="nav-dropdown-item">
-          <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">🏅</div>
-          <div><div>Ancarat 999</div><div class="nav-dropdown-sub">giá bạc ancarat hôm nay</div></div>
-        </a>
-        <a href="/gia-bac-doji" class="nav-dropdown-item">
-          <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#dc2626,#991b1b)">🔴</div>
-          <div><div>DOJI 99.9</div><div class="nav-dropdown-sub">giá bạc doji hôm nay</div></div>
-        </a>
-        <a href="/gia-bac-kim-ngan-phuc" class="nav-dropdown-item">
-          <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);font-size:10px;font-weight:900;color:#fff">KNP</div>
-          <div><div>Kim Ngân Phúc 999</div><div class="nav-dropdown-sub">giá bạc kim ngân phúc</div></div>
-        </a>
-      </div>
-    </div>
-
-    <a href="#section-world" class="nav-link">🌍 Giá Thế Giới</a>
-    <a href="/quy-doi-bac" class="nav-link">⚖️ Quy Đổi</a>
-    <a href="/so-sanh-gia-bac" class="nav-link">📊 So Sánh</a>
-    <a href="/lich-su-gia-bac" class="nav-link">📈 Lịch Sử</a>
-  </nav>
-
-  <div class="header-tag" style="margin-left:auto">
-    <span class="live-dot"></span>
-    Dữ liệu trực tiếp
-  </div>
-
-  {{-- Mobile hamburger --}}
-  <button class="nav-toggle" id="nav-toggle" aria-label="Mở menu">
-    <span></span><span></span><span></span>
-  </button>
-</header>
-
-{{-- Mobile Drawer --}}
-<div class="nav-drawer" id="nav-drawer">
-  <div class="nav-drawer-overlay" id="nav-overlay"></div>
-  <div class="nav-drawer-panel">
-    <div class="drawer-close"><button id="nav-close" aria-label="Đóng">×</button></div>
-    <a href="/" class="drawer-link"><span>🏠</span> Trang Chủ</a>
-    <div class="drawer-divider">Giá Bạc Thương Hiệu</div>
-    <a href="/gia-bac-phu-quy" class="drawer-link">
-      <div class="drawer-icon" style="background:linear-gradient(135deg,#b0bec5,#546e7a)">🥈</div>
-      Phú Quý 999
-    </a>
-    <a href="/gia-bac-ancarat" class="drawer-link">
-      <div class="drawer-icon" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">🏅</div>
-      Ancarat 999
-    </a>
-    <a href="/gia-bac-doji" class="drawer-link">
-      <div class="drawer-icon" style="background:linear-gradient(135deg,#dc2626,#991b1b)">🔴</div>
-      DOJI 99.9
-    </a>
-    <a href="/gia-bac-kim-ngan-phuc" class="drawer-link">
-      <div class="drawer-icon" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);font-size:10px;font-weight:900;color:#fff">KNP</div>
-      Kim Ngân Phúc 999
-    </a>
-    <div class="drawer-divider">Biểu Đồ</div>
-    <a href="#section-world" class="drawer-link" id="drawer-world"><span>🌍</span> Giá Thế Giới</a>
-    <div class="drawer-divider">Công Cụ</div>
-    <a href="/quy-doi-bac" class="drawer-link"><span>⚖️</span> Quy Đổi Giá Bạc</a>
-    <a href="/so-sanh-gia-bac" class="drawer-link"><span>📊</span> So Sánh Giá Bạc</a>
-    <a href="/lich-su-gia-bac" class="drawer-link"><span>📈</span> Lịch Sử Giá Bạc</a>
-  </div>
-</div>
+@include('frontend.partials.header', ['activePage' => 'home'])
 
 <main>
 
   <!-- Page title -->
   <div class="page-header">
     <h1>📊 Giá Vàng & Bạc – Tổng Hợp</h1>
-    <p>Biểu đồ realtime thế giới · Giá bạc Phú Quý cập nhật mỗi 30 phút</p>
+    <p>Biểu đồ realtime thế giới · Giá bạc Phú Quý cập nhật real-time</p>
   </div>
 
   <!-- Ticker Tape -->
@@ -884,7 +650,7 @@
       <div class="sv-section-icon">🥈</div>
       <div>
         <h2>Giá Bạc Thương Hiệu</h2>
-        <p>Phú Quý · Ancarat · DOJI · Cập nhật mỗi 30 phút</p>
+        <p>Phú Quý · Ancarat · DOJI · Cập nhật real-time</p>
       </div>
     </div>
 
@@ -1345,44 +1111,5 @@
 </script>
 
 </body>
-<script>
-/* ── NAV: dropdown + mobile drawer ── */
-(function () {
-  /* Dropdown – desktop */
-  var dropBtn = document.querySelector('#nav-bac .nav-dropdown-toggle');
-  var dropEl  = document.getElementById('nav-bac');
-  if (dropBtn && dropEl) {
-    dropBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      dropEl.classList.toggle('open');
-    });
-    document.addEventListener('click', function () {
-      dropEl.classList.remove('open');
-    });
-  }
-
-  /* Mobile drawer */
-  var drawer  = document.getElementById('nav-drawer');
-  var toggle  = document.getElementById('nav-toggle');
-  var closeBtn = document.getElementById('nav-close');
-  var overlay  = document.getElementById('nav-overlay');
-
-  function openDrawer()  { if (drawer) drawer.classList.add('open'); }
-  function closeDrawer() { if (drawer) drawer.classList.remove('open'); }
-
-  if (toggle)   toggle.addEventListener('click', openDrawer);
-  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-  if (overlay)  overlay.addEventListener('click', closeDrawer);
-
-  /* Close drawer on internal anchor click (e.g. #section-world) */
-  var drawerWorld = document.getElementById('drawer-world');
-  if (drawerWorld) drawerWorld.addEventListener('click', closeDrawer);
-
-  /* ESC key closes both */
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeDrawer(); if (dropEl) dropEl.classList.remove('open'); }
-  });
-})();
-</script>
 </html>
 

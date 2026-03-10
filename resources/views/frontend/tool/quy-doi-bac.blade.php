@@ -200,7 +200,7 @@
   <div class="info-card">
     <h2>💡 Hướng Dẫn Quy Đổi Giá Bạc</h2>
     <p>Công cụ quy đổi giá bạc của GiáVàng.vn giúp bạn tính toán nhanh chóng giá trị mua vào và bán ra của bạc theo nhiều đơn vị khác nhau. Giá được lấy trực tiếp từ các thương hiệu bạc uy tín như Phú Quý, Ancarat, DOJI và Kim Ngân Phúc.</p>
-    <p>Lưu ý: Giá hiển thị là giá tham khảo, cập nhật mỗi 30 phút. Hãy xác nhận giá chính thức từ thương hiệu trước khi giao dịch.</p>
+    <p>Lưu ý: Giá hiển thị là giá tham khảo, cập nhật real-time. Hãy xác nhận giá chính thức từ thương hiệu trước khi giao dịch.</p>
   </div>
 </main>
 

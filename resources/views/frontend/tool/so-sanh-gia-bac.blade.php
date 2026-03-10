@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>So Sánh Giá Bạc Các Thương Hiệu Hôm Nay {{ now()->format('d/m/Y') }} | GiáVàng.vn</title>
-  <meta name="description" content="So sánh giá bạc mua vào bán ra của Phú Quý, Ancarat, DOJI, Kim Ngân Phúc hôm nay {{ now()->format('d/m/Y') }}. Bảng giá real-time cập nhật mỗi 30 phút."/>
+  <meta name="description" content="So sánh giá bạc mua vào bán ra của Phú Quý, Ancarat, DOJI, Kim Ngân Phúc hôm nay {{ now()->format('d/m/Y') }}. Bảng giá real-time cập nhật liên tục."/>
   <link rel="canonical" href="{{ url('/so-sanh-gia-bac') }}"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
@@ -117,7 +117,7 @@
       <div class="page-head-icon">📊</div>
       <h1>So Sánh Giá Bạc Hôm Nay – {{ now()->format('d/m/Y') }}</h1>
     </div>
-    <p class="sub">Bảng so sánh giá bạc mua vào bán ra của tất cả thương hiệu · Cập nhật real-time mỗi 30 phút</p>
+    <p class="sub">Bảng so sánh giá bạc mua vào bán ra của tất cả thương hiệu · Cập nhật real-time</p>
   </div>
 
   {{-- FILTER BAR --}}
@@ -177,7 +177,7 @@
     <p><strong>Giá mua vào</strong>: Giá thương hiệu mua bạc từ bạn (bạn bán bạc và nhận tiền). Thường thấp hơn giá bán ra.</p>
     <p><strong>Giá bán ra</strong>: Giá thương hiệu bán bạc cho bạn (bạn mua bạc và trả tiền). Thường cao hơn giá mua vào.</p>
     <p><strong>Chênh lệch (Spread)</strong>: Hiệu số giữa giá bán ra và giá mua vào. Spread thấp hơn nghĩa là chi phí giao dịch thấp hơn — có lợi hơn cho nhà đầu tư.</p>
-    <p>Bảng giá được cập nhật tự động mỗi 30 phút trong giờ giao dịch từ các thương hiệu bạc uy tín tại Việt Nam.</p>
+    <p>Bảng giá được cập nhật tự động real-time trong giờ giao dịch từ các thương hiệu bạc uy tín tại Việt Nam.</p>
   </div>
 </main>
 

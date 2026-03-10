@@ -6,7 +6,7 @@
 <style>
 /* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;gap:24px}
+  border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:16px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold,#f5c518),#c8820a);border-radius:50%;
   display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;
@@ -17,9 +17,9 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
 .header-tag{font-size:12px;color:var(--muted,#6e778c);display:flex;align-items:center;gap:6px}
 
 /* Nav */
-.header-nav{display:flex;align-items:center;gap:4px;margin-left:20px}
-.nav-link{font-size:13px;font-weight:500;color:var(--muted2,#909ab2);text-decoration:none;
-  padding:6px 12px;border-radius:7px;transition:color .18s,background .18s;white-space:nowrap}
+.header-nav{display:flex;align-items:center;gap:2px;margin-left:auto;flex:1;justify-content:flex-end}
+.nav-link{font-size:12.5px;font-weight:500;color:var(--muted2,#909ab2);text-decoration:none;
+  padding:6px 10px;border-radius:7px;transition:color .18s,background .18s;white-space:nowrap}
 .nav-link:hover{color:var(--text,#e4e8f2);background:rgba(255,255,255,0.05)}
 .nav-link.active{color:#ffd76e}
 
@@ -46,7 +46,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;margin-left:auto;
   background:none;border:none}
 .nav-toggle span{display:block;width:22px;height:2px;background:var(--muted2,#909ab2);border-radius:2px;transition:all .25s}
-@media(max-width:768px){
+@media(max-width:900px){
   .header-nav{display:none}.nav-toggle{display:flex}.header-tag{display:none}
   header{padding:0 16px}
 }

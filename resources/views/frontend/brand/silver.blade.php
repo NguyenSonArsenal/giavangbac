@@ -343,7 +343,7 @@
       <div class="brand-icon">{{ $brand['icon'] }}</div>
       <h1>Giá Bạc {{ $brand['name_short'] }} 999 Hôm Nay – {{ now()->format('d/m/Y') }}</h1>
     </div>
-    <p class="sub">Cập nhật tự động mỗi 30 phút · Nguồn: {{ $brand['name_short'] }} chính thức · GiáVàng.vn</p>
+    <p class="sub">Cập nhật real-time · Nguồn: {{ $brand['name_short'] }} chính thức · GiáVàng.vn</p>
   </div>
 
   {{-- SSR PRICE TABLE — Google đọc được --}}

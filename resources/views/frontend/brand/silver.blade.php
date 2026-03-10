@@ -464,17 +464,7 @@
 
 </main>
 
-<footer>
-  <p>⚠️ Giá tham khảo · Xác nhận từ nguồn chính thức trước khi giao dịch</p>
-  <p style="margin-top:6px">
-    <a href="/">GiáVàng.vn</a> ·
-    <a href="/gia-bac-phu-quy">Phú Quý</a> ·
-    <a href="/gia-bac-ancarat">Ancarat</a> ·
-    <a href="/gia-bac-doji">DOJI</a> ·
-    <a href="/gia-bac-kim-ngan-phuc">Kim Ngân Phúc</a>
-  </p>
-  <p style="margin-top:6px">© {{ now()->year }} GiáVàng.vn</p>
-</footer>
+@include('frontend.partials.footer')
 
 <script>
 (function () {

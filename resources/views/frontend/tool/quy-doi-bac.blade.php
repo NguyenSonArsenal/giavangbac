@@ -103,9 +103,6 @@
     .convert-table tr:last-child td{border-bottom:none}
     .convert-table td:nth-child(2){font-family:'JetBrains Mono',monospace;color:var(--blue)}
 
-    /* FOOTER */
-    footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--muted)}
-    footer a{color:var(--muted2);text-decoration:none}footer a:hover{color:var(--text)}
   </style>
 </head>
 <body>
@@ -204,16 +201,7 @@
   </div>
 </main>
 
-<footer>
-  <p>⚠️ Giá tham khảo · Xác nhận từ nguồn chính thức trước khi giao dịch</p>
-  <p style="margin-top:6px">
-    <a href="/">GiáVàng.vn</a> ·
-    <a href="/quy-doi-bac">Quy Đổi</a> ·
-    <a href="/so-sanh-gia-bac">So Sánh</a> ·
-    <a href="/lich-su-gia-bac">Lịch Sử</a>
-  </p>
-  <p style="margin-top:6px">© {{ now()->year }} GiáVàng.vn</p>
-</footer>
+@include('frontend.partials.footer')
 
 <script>
 (function() {

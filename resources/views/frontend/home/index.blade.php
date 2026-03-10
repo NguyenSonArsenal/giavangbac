@@ -815,8 +815,7 @@
 
 </main>
 
-
-
+@include('frontend.partials.footer')
 
 
 

@@ -88,8 +88,6 @@
     .cta-primary{background:linear-gradient(135deg,#4f7af8,#7c3aed);color:#fff;border-color:transparent}
     .cta-secondary{background:var(--bg3);color:var(--text2)}
 
-    footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--muted)}
-    footer a{color:var(--muted2);text-decoration:none}footer a:hover{color:var(--text)}
   </style>
 </head>
 <body>
@@ -213,15 +211,6 @@
   </div>
 </main>
 
-<footer>
-  <p>⚠️ Bài viết mang tính tham khảo · Tham vấn chuyên gia trước khi đầu tư</p>
-  <p style="margin-top:6px">
-    <a href="/">GiáVàng.vn</a> ·
-    <a href="/bac-999-la-gi">Bạc 999 Là Gì</a> ·
-    <a href="/nen-mua-bac-o-dau">Mua Bạc Ở Đâu</a> ·
-    <a href="/bac-co-phai-kenh-dau-tu-tot">Đầu Tư Bạc</a>
-  </p>
-  <p style="margin-top:6px">© {{ now()->year }} GiáVàng.vn</p>
-</footer>
+@include('frontend.partials.footer')
 </body>
 </html>

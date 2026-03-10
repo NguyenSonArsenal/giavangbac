@@ -98,8 +98,6 @@
       padding:24px;margin-bottom:24px}
     .info-card h2{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--text2)}
     .info-card p{font-size:14px;line-height:1.75;color:var(--muted2);margin-bottom:8px}
-    footer{border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--muted)}
-    footer a{color:var(--muted2);text-decoration:none}footer a:hover{color:var(--text)}
   </style>
 </head>
 <body>
@@ -181,16 +179,7 @@
   </div>
 </main>
 
-<footer>
-  <p>⚠️ Giá tham khảo · Xác nhận từ nguồn chính thức trước khi giao dịch</p>
-  <p style="margin-top:6px">
-    <a href="/">GiáVàng.vn</a> ·
-    <a href="/quy-doi-bac">Quy Đổi</a> ·
-    <a href="/so-sanh-gia-bac">So Sánh</a> ·
-    <a href="/lich-su-gia-bac">Lịch Sử</a>
-  </p>
-  <p style="margin-top:6px">© {{ now()->year }} GiáVàng.vn</p>
-</footer>
+@include('frontend.partials.footer')
 
 <script>
 (function() {

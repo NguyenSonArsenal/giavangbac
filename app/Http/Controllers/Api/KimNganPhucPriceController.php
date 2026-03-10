@@ -85,11 +85,11 @@ class KimNganPhucPriceController extends Controller
                 ]);
             }
 
-            $dates = $buyPrices = $sellPrices = [];
+            $dates = $buy_prices = $sell_prices = [];
             foreach ($history as $record) {
-                $dates[]      = $record->recorded_at->format('H:i');
-                $buyPrices[]  = $record->buy_price;
-                $sellPrices[] = $record->sell_price;
+                $dates[]        = $record->recorded_at->format('H:i');
+                $buy_prices[]   = $record->buy_price;
+                $sell_prices[]  = $record->sell_price;
             }
 
             return response()->json([
@@ -112,11 +112,11 @@ class KimNganPhucPriceController extends Controller
             ]);
         }
 
-        $dates = $buyPrices = $sellPrices = [];
+        $dates = $buy_prices = $sell_prices = [];
         foreach ($history as $record) {
-            $dates[]      = $record->price_date->format('d/m');
-            $buyPrices[]  = $record->buy_price;
-            $sellPrices[] = $record->sell_price;
+            $dates[]        = $record->price_date->format('d/m');
+            $buy_prices[]   = $record->buy_price;
+            $sell_prices[]  = $record->sell_price;
         }
 
         return response()->json([

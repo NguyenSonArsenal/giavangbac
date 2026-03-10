@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -356,9 +356,6 @@
       align-items: stretch;
     }
     @media (max-width:1100px) {
-      .sv-main-layout { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width:840px) {
       .sv-main-layout { grid-template-columns: 1fr; }
     }
 
@@ -370,7 +367,7 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
-    @media (max-width:840px) {
+    @media (max-width:600px) {
       .sv-brands-grid { grid-template-columns: 1fr; }
     }
 
@@ -413,7 +410,7 @@
     .sv-tab.active {
       background: linear-gradient(135deg,#b0bec5,#78909c);
       color:#07090f; border-color:transparent;
-      box-shadow: 0 2px 8px rgba(176,190,197,0.3);
+      box-shadow:0 2px 8px rgba(176,190,197,0.3);
     }
 
     /* Card prices */
@@ -422,15 +419,22 @@
     }
     .sv-card-price-col { display:flex; flex-direction:column; gap:2px; }
     .sv-cprice-label   { font-size:10px; color:var(--muted); }
-    .sv-cprice-buy  {
-      font-size:20px; font-weight:900;
+    .sv-cprice-buy {
+      font-size: 20px; font-weight: 900;
       font-family:'JetBrains Mono',monospace;
       color:#f55252; letter-spacing:-0.5px; line-height:1;
     }
     .sv-cprice-sell {
-      font-size:20px; font-weight:900;
+      font-size: 20px; font-weight: 900;
       font-family:'JetBrains Mono',monospace;
       color:var(--green); letter-spacing:-0.5px; line-height:1;
+    }
+
+    /* Responsive: thu nhỏ giá tại màn hình trung */
+    @media (max-width: 1500px) {
+      .sv-cprice-buy, .sv-cprice-sell { font-size: 16px; letter-spacing: -0.3px; }
+      .sv-brand-card { padding: 12px 12px 10px; }
+      .sv-card-prices { gap: 8px; }
     }
     .sv-card-pct {
       margin-left:auto;
@@ -716,7 +720,6 @@
           </div>
         </div>
         <div class="sv-card-tabs">
-          <button class="sv-tab" data-brand="phuquy" data-unit="CHI" data-mult="1">Chỉ</button>
           <button class="sv-tab" data-brand="phuquy" data-unit="LUONG" data-mult="1">Lượng</button>
           <button class="sv-tab active" data-brand="phuquy" data-unit="KG" data-mult="1">KG</button>
         </div>
@@ -747,8 +750,8 @@
           </div>
         </div>
         <div class="sv-card-tabs">
-          <button class="sv-tab active" data-brand="ancarat" data-unit="LUONG" data-mult="1">Lượng</button>
-          <button class="sv-tab" data-brand="ancarat" data-unit="KG" data-mult="1">KG</button>
+          <button class="sv-tab" data-brand="ancarat" data-unit="LUONG" data-mult="1">Lượng</button>
+          <button class="sv-tab active" data-brand="ancarat" data-unit="KG" data-mult="1">KG</button>
         </div>
         <div class="sv-card-prices">
           <div class="sv-card-price-col">
@@ -808,8 +811,8 @@
           </div>
         </div>
         <div class="sv-card-tabs">
+          <button class="sv-tab" data-brand="kimnganphuc" data-unit="LUONG" data-mult="1">Lượng</button>
           <button class="sv-tab active" data-brand="kimnganphuc" data-unit="KG"    data-mult="1">KG</button>
-          <button class="sv-tab"        data-brand="kimnganphuc" data-unit="LUONG" data-mult="1">Lượng</button>
         </div>
         <div class="sv-card-prices">
           <div class="sv-card-price-col">
@@ -823,7 +826,7 @@
           <div class="sv-card-pct" id="knp-pct">–</div>
         </div>
         <div class="sv-card-bottom-row">
-          <div class="sv-card-spread">CL: <span class="spread-val" id="knp-spread">–</span></div>
+          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="knp-spread">–</span></div>
           <div class="sv-card-pct-days" id="knp-pct-days">7 ngày qua</div>
         </div>
       </div>
@@ -887,15 +890,15 @@
   // Active state
   let activeBrand = 'phuquy';
   let activePeriod = 7;
-  const brandUnit = { phuquy: 'KG', ancarat: 'LUONG', doji: 'LUONG', kimnganphuc: 'KG' };
+  const brandUnit = { phuquy: 'KG', ancarat: 'KG', doji: 'LUONG', kimnganphuc: 'KG' };
   const brandMult = { phuquy: 1, ancarat: 1, doji: 1, kimnganphuc: 1 };
 
   // Available unit options per brand shown in chart
   const brandUnitOptions = {
-    phuquy:      [{ unit:'KG',    mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }, { unit:'CHI', mult:1, label:'Chỉ' }],
+    phuquy:      [{ unit:'KG',    mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }],
     ancarat:     [{ unit:'LUONG', mult:1, label:'Lượng'  }, { unit:'KG',    mult:1, label:'KG'    }],
     doji:        [{ unit:'LUONG', mult:1, label:'1 Lượng'}, { unit:'LUONG', mult:5, label:'5 Lượng'}],
-    kimnganphuc: [{ unit:'KG',   mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }],
+    kimnganphuc: [{ unit:'LUONG', mult:1, label:'Lượng' }, { unit:'KG',    mult:1, label:'KG'    }],
   };
 
   /* ── Render unit tab buttons in the chart bar ── */
@@ -991,12 +994,18 @@
     loading.style.display = 'flex'; canvas.style.display = 'none';
 
     fetch(API[brand].history + '?days=' + days + '&type=' + unit)
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        if (!r.ok) { throw new Error('HTTP ' + r.status); }
+        return r.json();
+      })
       .then(function(json) {
         loading.style.display = 'none';
         if (!json.success || !json.data || json.data.dates.length === 0) {
-          loading.innerHTML = '<span style="color:var(--muted);font-size:12px">Chưa có dữ liệu lịch sử</span>';
-          loading.style.display = 'flex'; return;
+          var msg = json.message || 'Chưa có dữ liệu lịch sử cho thương hiệu này';
+          loading.innerHTML = '<span style="color:var(--muted);font-size:12px">⚠️ ' + msg + '</span>';
+          loading.style.display = 'flex';
+          console.info('[SVChart] no data:', brand, unit, days, json);
+          return;
         }
         canvas.style.display = 'block';
 
@@ -1065,9 +1074,10 @@
           if (sharedChart) { sharedChart._crosshairX = null; sharedChart._crosshairY = null; sharedChart.draw(); }
         };
       })
-      .catch(function() {
+      .catch(function(err) {
         loading.style.display='flex';
-        loading.innerHTML='<span style="color:var(--red);font-size:12px">Lỗi tải biểu đồ</span>';
+        loading.innerHTML='<span style="color:var(--muted);font-size:12px">⚠️ Chưa có dữ liệu lịch sử cho thương hiệu này</span>';
+        console.warn('[SVChart] load error:', err);
       });
   }
 

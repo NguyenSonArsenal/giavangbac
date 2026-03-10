@@ -28,18 +28,30 @@ class Kernel extends ConsoleKernel
         // T7   : 8h–10h, mỗi 10 phút
         // CN   : không chạy
         foreach (['silver:fetch-phuquy', 'silver:fetch-ancarat', 'silver:fetch-doji'] as $cmd) {
-            // Thứ 2 → Thứ 6: 8:00 – 19:00
+            // Thứ 2 → Thứ 6: 8:00 – 19:00 (mỗi 10 phút)
             $schedule->command($cmd)
                 ->everyTenMinutes()
                 ->weekdays()
                 ->between('8:00', '19:00')
                 ->withoutOverlapping();
 
-            // Thứ 7: 8:00 – 10:00
+            // Thứ 7: 8:00 – 10:00 (mỗi 10 phút)
             $schedule->command($cmd)
                 ->everyTenMinutes()
                 ->saturdays()
                 ->between('8:00', '10:00')
+                ->withoutOverlapping();
+
+            // Thứ 2 → Thứ 6: 8:35 — bắt giá đầu ngày (branch thường set sau 8:30)
+            $schedule->command($cmd)
+                ->weekdays()
+                ->at('8:35')
+                ->withoutOverlapping();
+
+            // Thứ 7: 8:35 — bắt giá đầu ngày
+            $schedule->command($cmd)
+                ->saturdays()
+                ->at('8:35')
                 ->withoutOverlapping();
         }
 
@@ -48,6 +60,17 @@ class Kernel extends ConsoleKernel
         $schedule->command('silver:fetch-kimnganphuc')
             ->everyTenMinutes()
             ->between('8:00', '19:00')
+            ->withoutOverlapping();
+
+        // Thứ 2 → Thứ 7: 8:35 — bắt giá đầu ngày
+        $schedule->command('silver:fetch-kimnganphuc')
+            ->weekdays()
+            ->at('8:35')
+            ->withoutOverlapping();
+
+        $schedule->command('silver:fetch-kimnganphuc')
+            ->saturdays()
+            ->at('8:35')
             ->withoutOverlapping();
     }
 

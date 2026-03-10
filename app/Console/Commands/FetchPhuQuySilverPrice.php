@@ -15,12 +15,13 @@ class FetchPhuQuySilverPrice extends Command
     const BASE_URL = 'https://giabac.vn/SilverInfo';
 
     /**
-     * Map: unit key → [filterType payload, unit label]
+     * Map: unit key để gọi API → [filterType, label, unit lưu DB, multiplier]
+     * Lưu ý: API Phú Quý chỉ có endpoint CHI (& KG); LUONG = CHI × 10
      */
     const UNITS = [
-        'CHI' => ['filterType' => '#pills-home',   'label' => 'Chỉ'],
-        'KG'  => ['filterType' => '#pills-contact', 'label' => 'Kilogram'],
-        // LUONG không lưu vào DB: tính từ CHI × 10 ở tầng API
+        'KG'  => ['filterType' => '#pills-contact', 'label' => 'Kilogram',  'save_unit' => 'KG',    'mult' => 1 ],
+        'CHI' => ['filterType' => '#pills-home',    'label' => 'Lượng (từ Chỉ)', 'save_unit' => 'LUONG', 'mult' => 10],
+        // Gọi API CHI nhưng lưu vào DB là LUONG (buy/sell × 10)
     ];
 
     public function handle(): int
@@ -33,27 +34,27 @@ class FetchPhuQuySilverPrice extends Command
 
         $success = true;
 
-        // Fetch chart data cho KG và CHI để lưu history (1 bảng duy nhất)
-        // Lưu ý: LUONG không có endpoint riêng trong API Phú Quý → tính từ CHI × 10 ở tầng API
+        // Fetch chart data cho KG và CHI (lưu dưới dạng KG và LUONG)
         $chartUnits = ['KG', 'CHI'];
-        foreach ($chartUnits as $chartUnit) {
+        foreach ($chartUnits as $apiUnit) {
+            $cfg = self::UNITS[$apiUnit];
             try {
                 $res = Http::timeout(15)
                     ->get(self::BASE_URL . '/GetGoldPriceChartFromSQLData', [
                         'days' => 1,
-                        'type' => $chartUnit,
+                        'type' => $apiUnit,
                     ]);
 
                 if ($res->ok()) {
                     $data = $res->json();
-                    $this->saveHistory($data, $chartUnit);
+                    $this->saveHistory($data, $cfg['save_unit'], $cfg['mult']);
                 } else {
-                    $this->warn("  ❌ Chart data [{$chartUnit}] HTTP " . $res->status());
+                    $this->warn("  ❌ Chart data [{$apiUnit}] HTTP " . $res->status());
                     $success = false;
                 }
             } catch (\Exception $e) {
-                $this->error("  💥 Chart data [{$chartUnit}]: " . $e->getMessage());
-                Log::error('FetchPhuQuySilverPrice chart error', ['unit' => $chartUnit, 'error' => $e->getMessage()]);
+                $this->error("  💥 Chart data [{$apiUnit}]: " . $e->getMessage());
+                Log::error('FetchPhuQuySilverPrice chart error', ['unit' => $apiUnit, 'error' => $e->getMessage()]);
                 $success = false;
             }
         }
@@ -96,9 +97,10 @@ class FetchPhuQuySilverPrice extends Command
 
     /**
      * Lưu các điểm dữ liệu từ chart API vào history.
-     * Dedup theo giá: chỉ insert khi buy/sell khác với record cuối cùng trong DB.
+     * @param string $saveUnit   Đơn vị lưu vào DB (KG hoặc LUONG)
+     * @param int    $multiplier Nhân giá trước khi lưu (1 cho KG, 10 cho LUONG từ CHI)
      */
-    private function saveHistory(array $data, string $unit = 'KG'): void
+    private function saveHistory(array $data, string $saveUnit = 'KG', int $multiplier = 1): void
     {
         $dates      = $data['Dates']          ?? [];
         $buyPrices  = $data['LastBuyPrices']  ?? [];
@@ -112,8 +114,8 @@ class FetchPhuQuySilverPrice extends Command
         $lastIdx = count($dates) - 1;
 
         $date  = $dates[$lastIdx]      ?? null;
-        $buy   = isset($buyPrices[$lastIdx])  ? (int) round($buyPrices[$lastIdx])  : null;
-        $sell  = isset($sellPrices[$lastIdx]) ? (int) round($sellPrices[$lastIdx]) : null;
+        $buy   = isset($buyPrices[$lastIdx])  ? (int) round($buyPrices[$lastIdx]  * $multiplier) : null;
+        $sell  = isset($sellPrices[$lastIdx]) ? (int) round($sellPrices[$lastIdx] * $multiplier) : null;
 
         if (!$date || !$buy || !$sell) {
             return;
@@ -121,24 +123,24 @@ class FetchPhuQuySilverPrice extends Command
 
         // Dedup theo giá: lấy record cuối cùng trong DB, so sánh giá
         $lastRecord = SilverPriceHistory::where('source', 'phuquy')
-            ->where('unit', $unit)
+            ->where('unit', $saveUnit)
             ->orderByDesc('recorded_at')
             ->first();
 
         if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
-            $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
+            $this->line("  ⏭  History [{$saveUnit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua.');
             return;
         }
 
         SilverPriceHistory::create([
             'source'      => 'phuquy',
-            'unit'        => $unit,
+            'unit'        => $saveUnit,
             'buy_price'   => $buy,
             'sell_price'  => $sell,
             'price_date'  => $date,
             'recorded_at' => now(),
         ]);
-        $this->info("  ✅ History [{$unit}]: {$date} Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
+        $this->info("  ✅ History [{$saveUnit}]: {$date} Mua=" . number_format($buy) . ' Bán=' . number_format($sell));
     }
 }
 

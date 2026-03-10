@@ -11,12 +11,11 @@ class SilverPriceController extends Controller
 {
     /**
      * GET /api/silver/current
-     * Trả về giá hiện tại của từng đơn vị từ nguồn phuquy
-     * Lấy record mới nhất trong silver_price_history cho mỗi unit (CHI, KG)
+     * Trả về giá hiện tại KG và LUONG (DB lưu trực tiếp, không còn tính từ CHI)
      */
     public function currentPrice(): JsonResponse
     {
-        $units = ['CHI', 'KG'];
+        $units  = ['KG', 'LUONG'];
         $byUnit = [];
 
         foreach ($units as $unit) {
@@ -47,30 +46,22 @@ class SilverPriceController extends Controller
             ], 404);
         }
 
-        // LUONG = CHI × 10 (tính runtime)
-        if (!isset($byUnit['LUONG']) && isset($byUnit['CHI'])) {
-            $chi = $byUnit['CHI'];
-            $byUnit['LUONG'] = [
-                'unit'           => 'LUONG',
-                'buy_price'      => $chi['buy_price']  * 10,
-                'sell_price'     => $chi['sell_price'] * 10,
-                'buy_formatted'  => number_format($chi['buy_price']  * 10),
-                'sell_formatted' => number_format($chi['sell_price'] * 10),
-                'recorded_at'    => $chi['recorded_at'],
-            ];
-        }
+        $latestAny = SilverPriceHistory::where('source', 'phuquy')
+            ->orderByDesc('recorded_at')
+            ->first();
 
         return response()->json([
-            'success' => true,
-            'source'  => 'phuquy',
-            'data'    => $byUnit,
+            'success'    => true,
+            'source'     => 'phuquy',
+            'updated_at' => $latestAny && $latestAny->recorded_at
+                ? $latestAny->recorded_at->format('H:i d/m/Y') : null,
+            'data'       => $byUnit,
         ]);
     }
 
     /**
-     * GET /api/silver/history?days=7&type=KG
-     * Trả về mảng ngày + giá mua/bán để vẽ chart
-     * days=1 → trả về intraday (tất cả điểm trong ngày hôm nay, nhãn HH:MM)
+     * GET /api/silver/history?days=7&type=KG|LUONG
+     * days=1 → intraday (nhãn HH:MM); days>1 → multi-day (nhãn dd/mm)
      */
     public function history(Request $request): JsonResponse
     {
@@ -78,15 +69,11 @@ class SilverPriceController extends Controller
         $unit = strtoupper($request->get('type', 'KG'));
 
         $days = max(1, min(365, $days));
-        $unit = in_array($unit, ['KG', 'CHI', 'LUONG']) ? $unit : 'KG';
+        $unit = in_array($unit, ['KG', 'LUONG']) ? $unit : 'KG';
 
-        // LUONG = CHI × 10 (Phú Quý chart API không có endpoint riêng cho Lượng)
-        $fetchUnit  = ($unit === 'LUONG') ? 'CHI' : $unit;
-        $multiplier = ($unit === 'LUONG') ? 10 : 1;
-
-        // ── 1D: intraday – tất cả điểm trong ngày hôm nay ──
+        // ── 1D: intraday ──
         if ($days === 1) {
-            $history = SilverPriceHistory::getIntradayHistory('phuquy', $fetchUnit);
+            $history = SilverPriceHistory::getIntradayHistory('phuquy', $unit);
 
             if ($history->isEmpty()) {
                 return response()->json([
@@ -96,11 +83,11 @@ class SilverPriceController extends Controller
                 ]);
             }
 
-            $dates = $buyPrices = $sellPrices = [];
+            $dates = $buy_prices = $sell_prices = [];
             foreach ($history as $record) {
-                $dates[]      = $record->recorded_at->format('H:i');
-                $buyPrices[]  = $record->buy_price  * $multiplier;
-                $sellPrices[] = $record->sell_price * $multiplier;
+                $dates[]        = $record->recorded_at->format('H:i');
+                $buy_prices[]   = $record->buy_price;
+                $sell_prices[]  = $record->sell_price;
             }
 
             return response()->json([
@@ -108,16 +95,12 @@ class SilverPriceController extends Controller
                 'unit'       => $unit,
                 'days'       => 1,
                 'type_label' => $this->unitLabel($unit),
-                'data'       => [
-                    'dates'       => $dates,
-                    'buy_prices'  => $buyPrices,
-                    'sell_prices' => $sellPrices,
-                ],
+                'data'       => compact('dates', 'buy_prices', 'sell_prices'),
             ]);
         }
 
-        // ── Multi-day: group by ngày ──
-        $history = SilverPriceHistory::getHistory('phuquy', $fetchUnit, $days);
+        // ── Multi-day ──
+        $history = SilverPriceHistory::getHistory('phuquy', $unit, $days);
 
         if ($history->isEmpty()) {
             return response()->json([
@@ -127,14 +110,11 @@ class SilverPriceController extends Controller
             ]);
         }
 
-        $dates      = [];
-        $buyPrices  = [];
-        $sellPrices = [];
-
+        $dates = $buy_prices = $sell_prices = [];
         foreach ($history as $record) {
-            $dates[]      = $record->price_date->format('d/m');
-            $buyPrices[]  = $record->buy_price  * $multiplier;
-            $sellPrices[] = $record->sell_price * $multiplier;
+            $dates[]        = $record->price_date->format('d/m');
+            $buy_prices[]   = $record->buy_price;
+            $sell_prices[]  = $record->sell_price;
         }
 
         return response()->json([
@@ -142,18 +122,12 @@ class SilverPriceController extends Controller
             'unit'       => $unit,
             'days'       => $days,
             'type_label' => $this->unitLabel($unit),
-            'data'       => [
-                'dates'       => $dates,
-                'buy_prices'  => $buyPrices,
-                'sell_prices' => $sellPrices,
-            ],
+            'data'       => compact('dates', 'buy_prices', 'sell_prices'),
         ]);
     }
 
-
     /**
      * GET /api/silver/percent?days=7
-     * Trả về % thay đổi giá trong N ngày
      */
     public function percent(Request $request): JsonResponse
     {
@@ -184,32 +158,23 @@ class SilverPriceController extends Controller
             ]);
         }
 
-        $oldSell = $oldest->sell_price;
-        $newSell = $latest->sell_price;
-
-        $pct = $oldSell > 0
-            ? round((($newSell - $oldSell) / $oldSell) * 100, 2)
+        $pct = $oldest->sell_price > 0
+            ? round((($latest->sell_price - $oldest->sell_price) / $oldest->sell_price) * 100, 2)
             : 0;
 
         return response()->json([
-            'success'    => true,
-            'percent'    => abs($pct),
-            'percent_raw'=> $pct,
-            'trend'      => $pct > 0 ? 'up' : ($pct < 0 ? 'down' : 'neutral'),
-            'days'       => $days,
-            'updated_at' => $latest->recorded_at ? $latest->recorded_at->format('H:i d/m/Y') : null,
+            'success'     => true,
+            'percent'     => abs($pct),
+            'percent_raw' => $pct,
+            'trend'       => $pct > 0 ? 'up' : ($pct < 0 ? 'down' : 'neutral'),
+            'days'        => $days,
+            'updated_at'  => $latest->recorded_at ? $latest->recorded_at->format('H:i d/m/Y') : null,
         ]);
     }
 
     private function unitLabel(string $unit): string
     {
-        if ($unit === 'CHI') {
-            return 'VND/Chỉ';
-        } elseif ($unit === 'LUONG') {
-            return 'VND/Lượng';
-        } elseif ($unit === 'KG') {
-            return 'VND/Kilogram';
-        }
-        return $unit;
+        $labels = ['LUONG' => 'VND/Lượng', 'KG' => 'VND/Kilogram'];
+        return $labels[$unit] ?? $unit;
     }
 }

@@ -444,10 +444,10 @@
   <div class="chart-section">
     <div class="chart-bar">
       <span class="chart-bar-title">Lịch sử giá bán ra</span>
-      @foreach($brand['units'] as $u)
-      <button class="unit-btn {{ $u === $brand['default_unit'] ? 'active' : '' }}"
-              data-unit="{{ $u }}" id="chart-unit-{{ $u }}">
-        {{ $brand['unit_labels'][$u] ?? $u }}
+      @foreach($brand['chart_unit_options'] as $opt)
+      <button class="unit-btn {{ $opt['active'] ? 'active' : '' }}"
+              data-unit="{{ $opt['unit'] }}" data-mult="{{ $opt['mult'] }}">
+        {{ $opt['label'] }}
       </button>
       @endforeach
       <span style="margin-left:auto"></span>
@@ -532,6 +532,7 @@
 
 <script>
 (function () {
+  var JS_COMPUTED = @json($brand['js_computed'] ?? []);
   var BRAND   = '{{ $brand['key'] }}';
   var API_KEY = '{{ $brand['api'] }}';
   var API_URLS = {
@@ -539,7 +540,9 @@
     history: '/api/' + API_KEY + '/history',
   };
 
-  var activeUnit  = '{{ $brand['default_unit'] }}';
+  var activeUnitBtn = document.querySelector('.unit-btn.active');
+  var activeUnit  = activeUnitBtn ? activeUnitBtn.dataset.unit : '{{ $brand['default_unit'] }}';
+  var activeMult  = activeUnitBtn ? (parseInt(activeUnitBtn.dataset.mult) || 1) : 1;
   var activeDays  = 7;
   var brandChart  = null;
 
@@ -561,6 +564,18 @@
           if (buyEl)    buyEl.textContent    = fmt(d.buy_price);
           if (sellEl)   sellEl.textContent   = fmt(d.sell_price);
           if (spreadEl) spreadEl.textContent = fmt(d.sell_price - d.buy_price);
+        });
+        // Handle computed units (e.g. LUONG_5 = LUONG × 5)
+        Object.keys(JS_COMPUTED).forEach(function(targetKey) {
+          var cfg = JS_COMPUTED[targetKey];
+          if (!json.data[cfg.from]) return;
+          var d = json.data[cfg.from];
+          var buyEl    = document.getElementById('ssr-buy-'  + targetKey);
+          var sellEl   = document.getElementById('ssr-sell-' + targetKey);
+          var spEl     = document.getElementById('ssr-spread-' + targetKey);
+          if (buyEl)  buyEl.textContent  = fmt(d.buy_price  * cfg.mult);
+          if (sellEl) sellEl.textContent = fmt(d.sell_price * cfg.mult);
+          if (spEl)   spEl.textContent   = fmt((d.sell_price - d.buy_price) * cfg.mult);
         });
         if (json.updated_at) {
           var el = document.getElementById('tbl-updated');
@@ -589,11 +604,28 @@
         }
         canvas.style.display = 'block';
 
-        var buys  = json.data.buy_prices;
-        var sells = json.data.sell_prices;
+        var buys  = json.data.buy_prices.map(function(v) { return v * activeMult; });
+        var sells = json.data.sell_prices.map(function(v) { return v * activeMult; });
         var unitLabel = UNIT_LABELS[activeUnit] || activeUnit;
+        if (activeMult > 1) unitLabel = activeMult + ' ' + unitLabel;
 
         if (brandChart) brandChart.destroy();
+
+        /* ── Crosshair: đường dọc + ngang mờ khi hover ── */
+        var crosshairPlugin = {
+          id: 'brandCrosshair',
+          afterDraw: function(chart) {
+            if (chart._chX == null) return;
+            var c = chart.ctx, y = chart.scales.y, x = chart.scales.x;
+            c.save();
+            c.setLineDash([4, 4]);
+            c.lineWidth = 1;
+            c.strokeStyle = 'rgba(255,255,255,0.18)';
+            c.beginPath(); c.moveTo(chart._chX, y.top);   c.lineTo(chart._chX, y.bottom); c.stroke();
+            c.beginPath(); c.moveTo(x.left, chart._chY);  c.lineTo(x.right,  chart._chY);  c.stroke();
+            c.restore();
+          }
+        };
 
         brandChart = new Chart(canvas, {
           type: 'line',
@@ -604,9 +636,13 @@
               { label:'Giá mua vào', data:buys,  borderColor:'#22c97a', backgroundColor:'rgba(34,201,122,0.06)',  borderWidth:2, pointRadius:json.data.dates.length<=15?3:1.5, pointHoverRadius:5, fill:true, tension:0.35 }
             ]
           },
+          plugins: [crosshairPlugin],
           options: {
             responsive:true, maintainAspectRatio:false,
             interaction:{ mode:'index', intersect:false },
+            onHover: function(event, _el, chart) {
+              if (event.native) { chart._chX = event.x; chart._chY = event.y; }
+            },
             plugins:{
               legend:{ labels:{ color:'#909ab2', font:{size:11,family:'Inter'}, usePointStyle:true, pointStyle:'line', pointStyleWidth:20, boxHeight:2 } },
               tooltip:{ backgroundColor:'rgba(13,16,24,0.97)', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
@@ -623,6 +659,10 @@
             }
           }
         });
+
+        canvas.onmouseleave = function() {
+          if (brandChart) { brandChart._chX = null; brandChart._chY = null; brandChart.draw(); }
+        };
       })
       .catch(function(err) {
         loading.style.display = 'flex';
@@ -637,6 +677,7 @@
       document.querySelectorAll('.unit-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       activeUnit = btn.dataset.unit;
+      activeMult = parseInt(btn.dataset.mult) || 1;
       loadChart();
     });
   });

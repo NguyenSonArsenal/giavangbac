@@ -102,6 +102,20 @@
       max-width: 1600px; margin: 0 auto;
       padding: 32px 28px 80px;
     }
+    @media (max-width: 600px) {
+      main { padding: 12px 0 60px; }
+      header { padding: 0 12px; }
+      .sv-brand-card { border-radius: 0; border-left: none; border-right: none; }
+      .sv-brands-grid { gap: 0; }
+      .sv-main-layout { gap: 6px; }
+      .sv-shared-chart-wrap { border-radius: 0; border-left: none; border-right: none; }
+      .sv-compact-section { margin-top: 16px; }
+      .ticker-wrap { border-radius: 0; border-left: none; border-right: none; }
+      .world-chart-card { border-radius: 0; border-left: none; border-right: none; }
+      .world-charts-grid { gap: 0; }
+      .sv-section-head { padding: 0 12px; }
+      .sv-footnote { padding: 0 12px; }
+    }
 
     /* PAGE HEADER */
     .page-header { margin-bottom: 32px; }
@@ -295,7 +309,7 @@
     /* Loading / error state */
     .sv-loading {
       display: flex; align-items: center; justify-content: center;
-      height: 200px; color: var(--muted); font-size: 14px; gap: 10px;
+      height: 100%; color: var(--muted); font-size: 14px; gap: 10px;
     }
     .sv-spinner {
       width: 20px; height: 20px; border: 2px solid var(--border2);
@@ -427,6 +441,20 @@
     .sv-card-pct.down { color:var(--red); }
     .sv-card-pct-days { font-size:10px; color:var(--muted); text-align:right; margin-top:2px; }
 
+    /* Spread row */
+    .sv-card-bottom-row {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:6px;
+    }
+    .sv-card-spread {
+      font-size:11px; color:var(--muted2);
+      display:flex; align-items:center; gap:4px;
+    }
+    .sv-card-spread .spread-val {
+      font-family:'JetBrains Mono',monospace;
+      font-size:11.5px; font-weight:700; color:var(--gold2);
+    }
+
     /* Shared chart section */
     .sv-shared-chart-wrap {
       background: var(--bg2);
@@ -470,9 +498,23 @@
     .sv-chart-unit-label {
       margin-left:auto; font-size:11px; color:var(--muted);
     }
+    .sv-chart-unit-tabs { display:flex; gap:5px; margin-left:8px; }
+    .sv-chart-unit-btn {
+      padding: 4px 11px; border-radius:5px;
+      font-size:11.5px; font-weight:600;
+      border:1px solid var(--border); background:var(--bg3);
+      color:var(--muted2); cursor:pointer;
+      transition:all .18s; font-family:'Inter',sans-serif;
+    }
+    .sv-chart-unit-btn:hover { border-color:var(--border2); color:var(--text); }
+    .sv-chart-unit-btn.active {
+      background:linear-gradient(135deg,#b0bec5,#78909c);
+      color:#07090f; border-color:transparent;
+      box-shadow:0 2px 8px rgba(176,190,197,0.3);
+    }
     .sv-shared-canvas-wrap {
       padding:12px 16px 16px;
-      position:relative; flex:1; min-height:260px;
+      position:relative; height:320px;
     }
     .sv-shared-canvas-wrap canvas { width:100%!important; height:100%!important; }
 
@@ -674,9 +716,9 @@
           </div>
         </div>
         <div class="sv-card-tabs">
-          <button class="sv-tab active" data-brand="phuquy" data-unit="CHI" data-mult="1">Chỉ</button>
+          <button class="sv-tab" data-brand="phuquy" data-unit="CHI" data-mult="1">Chỉ</button>
           <button class="sv-tab" data-brand="phuquy" data-unit="LUONG" data-mult="1">Lượng</button>
-          <button class="sv-tab" data-brand="phuquy" data-unit="KG" data-mult="1">KG</button>
+          <button class="sv-tab active" data-brand="phuquy" data-unit="KG" data-mult="1">KG</button>
         </div>
         <div class="sv-card-prices">
           <div class="sv-card-price-col">
@@ -689,7 +731,10 @@
           </div>
           <div class="sv-card-pct" id="pq-pct">–</div>
         </div>
-        <div class="sv-card-pct-days" id="pq-pct-days">7 ngày</div>
+        <div class="sv-card-bottom-row">
+          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="pq-spread">–</span></div>
+          <div class="sv-card-pct-days" id="pq-pct-days">7 ngày qua</div>
+        </div>
       </div>
 
       <!-- Ancarat -->
@@ -716,7 +761,10 @@
           </div>
           <div class="sv-card-pct" id="ac-pct">–</div>
         </div>
-        <div class="sv-card-pct-days" id="ac-pct-days">7 ngày</div>
+        <div class="sv-card-bottom-row">
+          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="ac-spread">–</span></div>
+          <div class="sv-card-pct-days" id="ac-pct-days">7 ngày qua</div>
+        </div>
       </div>
 
       <!-- DOJI -->
@@ -743,7 +791,10 @@
           </div>
           <div class="sv-card-pct" id="dj-pct">–</div>
         </div>
-        <div class="sv-card-pct-days" id="dj-pct-days">7 ngày</div>
+        <div class="sv-card-bottom-row">
+          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="dj-spread">–</span></div>
+          <div class="sv-card-pct-days" id="dj-pct-days">7 ngày qua</div>
+        </div>
       </div>
 
 
@@ -771,7 +822,10 @@
           </div>
           <div class="sv-card-pct" id="knp-pct">–</div>
         </div>
-        <div class="sv-card-pct-days" id="knp-pct-days">7 ngày</div>
+        <div class="sv-card-bottom-row">
+          <div class="sv-card-spread">CL: <span class="spread-val" id="knp-spread">–</span></div>
+          <div class="sv-card-pct-days" id="knp-pct-days">7 ngày qua</div>
+        </div>
       </div>
 
     </div><!-- /sv-brands-grid -->
@@ -786,13 +840,14 @@
           <button class="sv-chart-brand" data-brand="kimnganphuc">Kim Ngân Phúc</button>
         </div>
         <div class="sv-chart-period-tabs">
-          <button class="sv-prd active" data-days="1">1D</button>
-          <button class="sv-prd" data-days="7">7D</button>
+          <button class="sv-prd" data-days="1">1D</button>
+          <button class="sv-prd active" data-days="7">7D</button>
           <button class="sv-prd" data-days="30">1M</button>
           <button class="sv-prd" data-days="90">3M</button>
           <button class="sv-prd" data-days="365">1Y</button>
         </div>
-        <span class="sv-chart-unit-label" id="sv-chart-unit-lbl">VND/Chỉ</span>
+        <div class="sv-chart-unit-tabs" id="sv-chart-unit-tabs"></div>
+        <span class="sv-chart-unit-label" id="sv-chart-unit-lbl">VND/KG</span>
       </div>
       <div class="sv-shared-canvas-wrap">
         <div class="sv-loading" id="sv-chart-loading">
@@ -831,9 +886,48 @@
 
   // Active state
   let activeBrand = 'phuquy';
-  let activePeriod = 1;
-  const brandUnit = { phuquy: 'CHI', ancarat: 'LUONG', doji: 'LUONG', kimnganphuc: 'KG' };
+  let activePeriod = 7;
+  const brandUnit = { phuquy: 'KG', ancarat: 'LUONG', doji: 'LUONG', kimnganphuc: 'KG' };
   const brandMult = { phuquy: 1, ancarat: 1, doji: 1, kimnganphuc: 1 };
+
+  // Available unit options per brand shown in chart
+  const brandUnitOptions = {
+    phuquy:      [{ unit:'KG',    mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }, { unit:'CHI', mult:1, label:'Chỉ' }],
+    ancarat:     [{ unit:'LUONG', mult:1, label:'Lượng'  }, { unit:'KG',    mult:1, label:'KG'    }],
+    doji:        [{ unit:'LUONG', mult:1, label:'1 Lượng'}, { unit:'LUONG', mult:5, label:'5 Lượng'}],
+    kimnganphuc: [{ unit:'KG',   mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }],
+  };
+
+  /* ── Render unit tab buttons in the chart bar ── */
+  function renderChartUnitTabs() {
+    var options = brandUnitOptions[activeBrand] || [];
+    var curUnit = brandUnit[activeBrand];
+    var curMult = brandMult[activeBrand];
+    var container = document.getElementById('sv-chart-unit-tabs');
+    if (!container) return;
+    container.innerHTML = options.map(function(opt) {
+      var isActive = (opt.unit === curUnit && opt.mult === curMult) ? ' active' : '';
+      return '<button class="sv-chart-unit-btn' + isActive + '" data-unit="' + opt.unit + '" data-mult="' + opt.mult + '">' + opt.label + '</button>';
+    }).join('');
+    // Attach click handlers for newly created buttons
+    container.querySelectorAll('.sv-chart-unit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        container.querySelectorAll('.sv-chart-unit-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var newUnit = btn.dataset.unit;
+        var newMult = parseInt(btn.dataset.mult) || 1;
+        brandUnit[activeBrand] = newUnit;
+        brandMult[activeBrand] = newMult;
+        // Also sync the card unit tabs on the left
+        document.querySelectorAll('.sv-tab[data-brand="' + activeBrand + '"]').forEach(function(t){ t.classList.remove('active'); });
+        var matchTab = document.querySelector('.sv-tab[data-brand="' + activeBrand + '"][data-unit="' + newUnit + '"][data-mult="' + newMult + '"]');
+        if (matchTab) matchTab.classList.add('active');
+        loadBrandPrice(activeBrand);
+        loadBrandPct(activeBrand, activePeriod);
+        loadSharedChart();
+      });
+    });
+  }
 
   let sharedChart = null;
 
@@ -841,10 +935,10 @@
 
   /* ── Element ID map per brand ── */
   const ELIDS = {
-    phuquy:  { buy: 'pq-buy',  sell: 'pq-sell',  updated: 'pq-updated',  pct: 'pq-pct',  pctDays: 'pq-pct-days'  },
-    ancarat: { buy: 'ac-buy',  sell: 'ac-sell',  updated: 'ac-updated',  pct: 'ac-pct',  pctDays: 'ac-pct-days'  },
-    doji:    { buy: 'dj-buy',  sell: 'dj-sell',  updated: 'dj-updated',  pct: 'dj-pct',  pctDays: 'dj-pct-days'  },
-    kimnganphuc: { buy: 'knp-buy', sell: 'knp-sell', updated: 'knp-updated', pct: 'knp-pct', pctDays: 'knp-pct-days' },
+    phuquy:  { buy: 'pq-buy',  sell: 'pq-sell',  updated: 'pq-updated',  pct: 'pq-pct',  pctDays: 'pq-pct-days',  spread: 'pq-spread'  },
+    ancarat: { buy: 'ac-buy',  sell: 'ac-sell',  updated: 'ac-updated',  pct: 'ac-pct',  pctDays: 'ac-pct-days',  spread: 'ac-spread'  },
+    doji:    { buy: 'dj-buy',  sell: 'dj-sell',  updated: 'dj-updated',  pct: 'dj-pct',  pctDays: 'dj-pct-days',  spread: 'dj-spread'  },
+    kimnganphuc: { buy: 'knp-buy', sell: 'knp-sell', updated: 'knp-updated', pct: 'knp-pct', pctDays: 'knp-pct-days', spread: 'knp-spread' },
   };
 
   /* ── Load current price for one brand ── */
@@ -858,9 +952,13 @@
         if (!json.success || !json.data) return;
         var d = json.data[unit];
         if (!d) return;
-        document.getElementById(ids.buy).textContent     = fmt(d.buy_price  * mult);
-        document.getElementById(ids.sell).textContent    = fmt(d.sell_price * mult);
+        var buyVal  = d.buy_price  * mult;
+        var sellVal = d.sell_price * mult;
+        document.getElementById(ids.buy).textContent     = fmt(buyVal);
+        document.getElementById(ids.sell).textContent    = fmt(sellVal);
         document.getElementById(ids.updated).textContent = d.recorded_at || '';
+        var spreadEl = ids.spread ? document.getElementById(ids.spread) : null;
+        if (spreadEl) spreadEl.textContent = fmt(Math.round(sellVal - buyVal));
       })
       .catch(function(){});
   }
@@ -910,6 +1008,25 @@
         var sells = json.data.sell_prices.map(function(v) { return v * mult; });
 
         if (sharedChart) { sharedChart.destroy(); }
+
+        /* ── Crosshair plugin: đường dọc + ngang mờ khi hover ── */
+        var crosshairPlugin = {
+          id: 'svCrosshair',
+          afterDraw: function(chart) {
+            if (chart._crosshairX == null) return;
+            var ctx2  = chart.ctx;
+            var yAxis = chart.scales.y;
+            var xAxis = chart.scales.x;
+            ctx2.save();
+            ctx2.setLineDash([4, 4]);
+            ctx2.lineWidth = 1;
+            ctx2.strokeStyle = 'rgba(255,255,255,0.18)';
+            ctx2.beginPath(); ctx2.moveTo(chart._crosshairX, yAxis.top);    ctx2.lineTo(chart._crosshairX, yAxis.bottom); ctx2.stroke();
+            ctx2.beginPath(); ctx2.moveTo(xAxis.left, chart._crosshairY);   ctx2.lineTo(xAxis.right,  chart._crosshairY);  ctx2.stroke();
+            ctx2.restore();
+          }
+        };
+
         sharedChart = new Chart(canvas, {
           type: 'line',
           data: {
@@ -919,9 +1036,13 @@
               { label: 'Giá mua vào', data: buys,  borderColor: '#22c97a', backgroundColor: 'rgba(34,201,122,0.08)',  borderWidth: 2, pointRadius: json.data.dates.length <= 15 ? 3 : 1.5, pointHoverRadius: 5, fill: true, tension: 0.38 }
             ]
           },
+          plugins: [crosshairPlugin],
           options: {
             responsive: true, maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
+            onHover: function(event, _el, chart) {
+              if (event.native) { chart._crosshairX = event.x; chart._crosshairY = event.y; }
+            },
             plugins: {
               legend: { labels: { color: '#909ab2', font: { size: 11, family:'Inter' }, usePointStyle:true, pointStyle:'line', pointStyleWidth:20, boxHeight:2 } },
               tooltip: { backgroundColor:'rgba(13,16,24,0.96)', borderColor:'rgba(176,190,197,0.2)', borderWidth:1,
@@ -938,6 +1059,11 @@
             }
           }
         });
+
+        /* xóa crosshair khi chuột rời canvas */
+        canvas.onmouseleave = function() {
+          if (sharedChart) { sharedChart._crosshairX = null; sharedChart._crosshairY = null; sharedChart.draw(); }
+        };
       })
       .catch(function() {
         loading.style.display='flex';
@@ -967,7 +1093,7 @@
       brandMult[brand] = mult;
       loadBrandPrice(brand);
       loadBrandPct(brand, activePeriod);
-      if (activeBrand === brand) loadSharedChart();
+      if (activeBrand === brand) { renderChartUnitTabs(); loadSharedChart(); }
     });
   });
 
@@ -981,6 +1107,7 @@
       document.querySelectorAll('.sv-chart-brand').forEach(function(b){ b.classList.remove('active'); });
       var chartTab = document.querySelector('.sv-chart-brand[data-brand="' + activeBrand + '"]');
       if (chartTab) chartTab.classList.add('active');
+      renderChartUnitTabs();
       loadSharedChart();
     });
   });
@@ -995,6 +1122,7 @@
       document.querySelectorAll('.sv-brand-card').forEach(function(c){ c.classList.remove('active'); });
       var card = document.getElementById('sv-card-' + activeBrand);
       if (card) card.classList.add('active');
+      renderChartUnitTabs();
       loadSharedChart();
     });
   });
@@ -1016,6 +1144,7 @@
   var firstCard = document.getElementById('sv-card-phuquy');
   if (firstCard) firstCard.classList.add('active');
 
+  renderChartUnitTabs();
   loadAllPrices();
   loadSharedChart();
   setInterval(function() { loadAllPrices(); loadSharedChart(); }, 30 * 60 * 1000);

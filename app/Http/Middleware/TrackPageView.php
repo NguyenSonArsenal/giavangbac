@@ -61,7 +61,7 @@ class TrackPageView
 
     private function shouldSkip($path)
     {
-        $skipPrefixes = ['api/', 'admin/', '_debugbar/', 'dk-log', 'favicon', 'robots'];
+        $skipPrefixes = ['api/', 'admin/', '_debugbar/', 'dk-log', 'dk-server', 'favicon', 'robots'];
         foreach ($skipPrefixes as $prefix) {
             if (strpos($path, $prefix) === 0) {
                 return true;

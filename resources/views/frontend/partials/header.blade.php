@@ -114,6 +114,10 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
         📝 Bài Viết <span class="nav-caret">▾</span>
       </div>
       <div class="nav-dropdown-menu">
+        <a href="/bai-viet" class="nav-dropdown-item" style="border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px;padding-bottom:12px">
+          <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#4f7af8,#2563eb)">📝</div>
+          <div><div style="font-weight:700">Tất Cả Bài Viết</div><div class="nav-dropdown-sub">kiến thức vàng bạc & đầu tư</div></div>
+        </a>
         <a href="/bac-999-la-gi" class="nav-dropdown-item">
           <div class="nav-dropdown-icon" style="background:linear-gradient(135deg,#f5c518,#c8820a)">📖</div>
           <div><div>Bạc 999 Là Gì?</div><div class="nav-dropdown-sub">tìm hiểu bạc nguyên chất</div></div>
@@ -166,6 +170,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
     <a href="/so-sanh-gia-bac" class="drawer-link"><span>📊</span> So Sánh Giá Bạc</a>
     <a href="/lich-su-gia-bac" class="drawer-link"><span>📈</span> Lịch Sử Giá Bạc</a>
     <div class="drawer-divider">Bài Viết</div>
+    <a href="/bai-viet" class="drawer-link" style="font-weight:700;color:var(--blue,#4f7af8)"><span>📝</span> Tất Cả Bài Viết</a>
     <a href="/bac-999-la-gi" class="drawer-link"><span>📖</span> Bạc 999 Là Gì?</a>
     <a href="/nen-mua-bac-o-dau" class="drawer-link"><span>🛒</span> Mua Bạc Ở Đâu?</a>
     <a href="/bac-co-phai-kenh-dau-tu-tot" class="drawer-link"><span>📈</span> Đầu Tư Bạc</a>

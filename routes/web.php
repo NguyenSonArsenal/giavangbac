@@ -3,6 +3,7 @@
 use App\Http\Controllers\Frontend\ArticleController;
 use App\Http\Controllers\Frontend\BrandSilverController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\ToolController;
 use App\Http\Controllers\Frontend\ServerMonitorController;
@@ -32,4 +33,9 @@ Route::get('/lich-su-gia-bac', [ToolController::class, 'lichSu'])->name('tool.li
 Route::get('/bac-999-la-gi',               [ArticleController::class, 'bac999LaGi'])->name('article.bac999');
 Route::get('/nen-mua-bac-o-dau',           [ArticleController::class, 'nenMuaBacODau'])->name('article.muabac');
 Route::get('/bac-co-phai-kenh-dau-tu-tot', [ArticleController::class, 'dauTuBac'])->name('article.dautu');
+
+// ── Bài viết (CMS) ──
+Route::get('/bai-viet',        [PostController::class, 'index'])->name('post.index');
+Route::get('/bai-viet/{slug}', [PostController::class, 'show'])->name('post.show');
+
 

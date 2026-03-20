@@ -56,11 +56,13 @@
       <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js">
         {
           "symbols": [
-            {"proName": "OANDA:XAUUSD",  "title": "Vàng – Gold"},
-            {"proName": "OANDA:XAGUSD",  "title": "Bạc – Silver"},
-            {"proName": "FX_IDC:USDVND", "title": "USD/VND"},
-            {"proName": "COMEX:GC1!",    "title": "Gold Futures"},
-            {"proName": "COMEX:SI1!",    "title": "Silver Futures"}
+            {"proName": "OANDA:XAUUSD",    "title": "Vàng – Gold"},
+            {"proName": "OANDA:XAGUSD",    "title": "Bạc – Silver"},
+            {"proName": "FX_IDC:USDVND",   "title": "USD/VND"},
+            {"proName": "BITSTAMP:BTCUSD",  "title": "Bitcoin – BTC"},
+            {"proName": "BITSTAMP:ETHUSD",  "title": "Ethereum – ETH"},
+            {"proName": "BINANCE:SOLUSDT",  "title": "Solana – SOL"},
+            {"proName": "BINANCE:WLDUSDT",  "title": "Worldcoin – WLD"}
           ],
           "showSymbolLogo": true,
           "colorTheme": "dark",

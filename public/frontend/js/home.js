@@ -326,28 +326,54 @@
 
         // Hiển thị nội dung phân tích + highlight từ khóa
         body.classList.add('has-content');
-        var text = d.analysis;
+        var text = d.analysis || '';
         // Escape HTML
-        var div = document.createElement('div');
-        div.textContent = text;
-        var html = div.innerHTML;
-        // Giữ xuống dòng từ AI
-        html = html.replace(/\n/g, '<br>');
-        // Highlight từ khóa quan trọng
-        var highlights = [
-          { regex: /NÊN MUA|NÊN MUA VÀO|CÓ THỂ MUA VÀO/g, cls: 'hl-buy' },
-          { regex: /NÊN BÁN|NÊN BÁN RA|CÂN NHẮC BÁN RA/g, cls: 'hl-sell' },
-          { regex: /NÊN CHỜ|NÊN CHỜ ĐỢI|NÊN GIỮ|NÊN CHỜ THÊM/g, cls: 'hl-wait' },
-          { regex: /tăng mạnh|tăng nhẹ|xu hướng tăng/gi, cls: 'hl-up' },
-          { regex: /giảm mạnh|giảm nhẹ|giảm sâu|cắm đầu giảm|xu hướng giảm/gi, cls: 'hl-down' },
-          { regex: /đi ngang|tích lũy|ổn định/gi, cls: 'hl-flat' },
-          { regex: /Khuyến nghị:/g, cls: 'hl-label' },
+        var tmp = document.createElement('div');
+        tmp.textContent = text;
+        var html = tmp.innerHTML;
+        // Giữ xuống dòng (hỗ trợ cả \r\n và \n)
+        html = html.split('\r\n').join('<br>');
+        html = html.split('\n').join('<br>');
+
+        // Highlight từ khóa — dùng split/join thay regex (Safari-safe)
+        var hlMap = [
+          ['NÊN MUA VÀO', 'hl-buy'], ['CÓ THỂ MUA VÀO', 'hl-buy'], ['NÊN MUA', 'hl-buy'],
+          ['CÂN NHẮC BÁN RA', 'hl-sell'], ['NÊN BÁN RA', 'hl-sell'], ['NÊN BÁN', 'hl-sell'],
+          ['NÊN CHỜ ĐỢI', 'hl-wait'], ['NÊN CHỜ THÊM', 'hl-wait'], ['NÊN CHỜ', 'hl-wait'],
+          ['NÊN GIỮ', 'hl-wait'],
         ];
-        highlights.forEach(function(h) {
-          html = html.replace(h.regex, function(m) {
-            return '<span class="sv-hl ' + h.cls + '">' + m + '</span>';
-          });
+        hlMap.forEach(function(pair) {
+          html = html.split(pair[0]).join('<span class="sv-hl ' + pair[1] + '">' + pair[0] + '</span>');
         });
+
+        // Case-insensitive highlights (thủ công cho Safari)
+        function hlReplace(str, keyword, cls) {
+          var lower = str.toLowerCase();
+          var kLower = keyword.toLowerCase();
+          var result = '';
+          var i = 0;
+          while (i < str.length) {
+            var idx = lower.indexOf(kLower, i);
+            if (idx === -1) { result += str.substring(i); break; }
+            result += str.substring(i, idx);
+            var original = str.substring(idx, idx + keyword.length);
+            result += '<span class="sv-hl ' + cls + '">' + original + '</span>';
+            i = idx + keyword.length;
+          }
+          return result;
+        }
+
+        var ciMap = [
+          ['tăng mạnh', 'hl-up'], ['tăng nhẹ', 'hl-up'], ['xu hướng tăng', 'hl-up'],
+          ['giảm mạnh', 'hl-down'], ['giảm nhẹ', 'hl-down'], ['giảm sâu', 'hl-down'],
+          ['cắm đầu giảm', 'hl-down'], ['xu hướng giảm', 'hl-down'],
+          ['đi ngang', 'hl-flat'], ['tích lũy', 'hl-flat'], ['ổn định', 'hl-flat'],
+          ['Khuyến nghị:', 'hl-label'],
+        ];
+        ciMap.forEach(function(pair) {
+          html = hlReplace(html, pair[0], pair[1]);
+        });
+
         body.innerHTML = html;
 
         // Thời gian cập nhật

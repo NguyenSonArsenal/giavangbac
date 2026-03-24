@@ -75,13 +75,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping();
 
         // ── AI Nhận định xu hướng giá bạc ────────────────────────────────────
-        // Chạy 2 lần/ngày: 8:30 (sau khi thị trường mở) và 19:30 (sau khi đóng)
+        // Chạy 1 lần/ngày lúc 19:30 (sau khi thị trường đóng, có đủ giá cả ngày)
+        // Chỉ T2–T6 (T7, CN không giao dịch)
         $schedule->command('silver:generate-trend')
-            ->dailyAt('8:30')
-            ->withoutOverlapping();
-
-        $schedule->command('silver:generate-trend')
-            ->dailyAt('19:30')
+            ->weekdays()
+            ->at('19:30')
             ->withoutOverlapping();
     }
 

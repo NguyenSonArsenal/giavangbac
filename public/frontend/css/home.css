@@ -224,6 +224,19 @@
     .sv-trend-stat.up   { color: var(--green); border-color: rgba(34,201,122,0.2); background: rgba(34,201,122,0.06); }
     .sv-trend-stat.down { color: var(--red);   border-color: rgba(245,82,82,0.2);  background: rgba(245,82,82,0.06); }
     .sv-trend-error { font-size: 12px; color: var(--muted); font-style: italic; }
+
+    /* Highlight keywords in AI analysis */
+    .sv-hl {
+      display: inline; padding: 1px 6px; border-radius: 4px;
+      font-weight: 700; white-space: nowrap;
+    }
+    .sv-hl.hl-buy  { color: #22c97a; background: rgba(34,201,122,0.12); }
+    .sv-hl.hl-sell { color: #f55252; background: rgba(245,82,82,0.12); }
+    .sv-hl.hl-wait { color: #f59e0b; background: rgba(245,158,11,0.12); }
+    .sv-hl.hl-up   { color: #22c97a; }
+    .sv-hl.hl-down { color: #f55252; }
+    .sv-hl.hl-flat { color: #64748b; }
+    .sv-hl.hl-label { color: #4f7af8; font-weight: 800; }
     @media (max-width: 600px) {
       .sv-trend-box { padding: 12px 14px 10px; border-radius: 0; border-left: none; border-right: none; }
       .sv-trend-body { font-size: 12.5px; }

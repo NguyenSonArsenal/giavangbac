@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Api\SilverTrendController;
 use App\Models\SilverTrendLog;
 use App\Models\SilverPriceHistory;
 use Illuminate\Console\Command;
@@ -27,14 +26,25 @@ class GenerateSilverTrend extends Command
             return 1;
         }
 
-        $latestSell = $history->last()->sell_price;
-        $oldestSell = $history->first()->sell_price;
-        $pctChange  = $oldestSell > 0
+        $latestSell  = $history->last()->sell_price;
+        $latestBuy   = $history->last()->buy_price;
+        $oldestSell  = $history->first()->sell_price;
+        $pctChange   = $oldestSell > 0
             ? round((($latestSell - $oldestSell) / $oldestSell) * 100, 2)
             : 0;
         $highSell = $history->max('sell_price');
         $lowSell  = $history->min('sell_price');
         $avgSell  = round($history->avg('sell_price'));
+
+        // So sánh hôm nay vs hôm qua
+        $todayRecord     = $history->last();
+        $yesterdayRecord = $history->count() >= 2 ? $history->slice(-2, 1)->first() : null;
+        $dailyChange     = 0;
+        $dailyChangePct  = 0;
+        if ($yesterdayRecord && $yesterdayRecord->sell_price > 0) {
+            $dailyChange    = $todayRecord->sell_price - $yesterdayRecord->sell_price;
+            $dailyChangePct = round(($dailyChange / $yesterdayRecord->sell_price) * 100, 2);
+        }
 
         $stats = [
             'period'     => '7 ngày',
@@ -57,7 +67,7 @@ class GenerateSilverTrend extends Command
         })->values()->toArray();
 
         // Gọi Gemini AI
-        $analysis = $this->callGemini($priceData, $stats);
+        $analysis = $this->callGemini($priceData, $stats, $todayRecord, $dailyChangePct, $dailyChange);
         $source = 'gemini';
 
         if (!$analysis) {
@@ -78,7 +88,7 @@ class GenerateSilverTrend extends Command
             'raw_stats'    => $stats,
         ]);
 
-        // Update cache (API sẽ đọc từ cache, fallback về DB)
+        // Update cache
         $cacheData = [
             'analysis'   => $analysis,
             'stats'      => $stats,
@@ -94,7 +104,7 @@ class GenerateSilverTrend extends Command
         return 0;
     }
 
-    private function callGemini(array $priceData, array $stats): ?string
+    private function callGemini(array $priceData, array $stats, $todayRecord, float $dailyChangePct, $dailyChange): ?string
     {
         $apiKey = config('services.gemini.api_key');
         if (!$apiKey) return null;
@@ -103,43 +113,68 @@ class GenerateSilverTrend extends Command
             return "- {$p['date']} ({$p['day']}): Mua {$p['buy_price']} | Bán {$p['sell_price']}";
         })->implode("\n");
 
-        $prompt = <<<PROMPT
-Bạn là chuyên gia phân tích thị trường bạc tại Việt Nam. Dựa vào dữ liệu giá bạc 999 (đơn vị VND/KG) trong 7 ngày gần nhất dưới đây, hãy viết nhận định xu hướng ngắn hạn.
+        // Pre-compute cho heredoc
+        $todayDate        = $todayRecord->price_date->format('d/m/Y');
+        $todayBuyFmt      = $priceData[count($priceData) - 1]['buy_price'];
+        $todaySellFmt     = $priceData[count($priceData) - 1]['sell_price'];
+        $dailyChangeSign  = $dailyChange > 0 ? '+' : '';
+        $dailyChangeFmt   = number_format($dailyChange);
+        $dailyDir         = $dailyChangePct >= 0 ? 'tăng' : 'giảm';
+        $dailyAbs         = abs($dailyChangePct);
+        $dailyLabel       = $dailyAbs < 0.5 ? 'gần như không đổi' : ($dailyAbs < 2 ? "{$dailyDir} nhẹ" : ($dailyAbs < 5 ? "{$dailyDir} khá mạnh" : "cắm đầu {$dailyDir} mạnh"));
 
-📊 DỮ LIỆU GIÁ BẠC 7 NGÀY:
+        $prompt = <<<PROMPT
+Bạn là chuyên gia phân tích thị trường bạc.
+
+DỮ LIỆU:
+- Giá bạc hiện tại (bán ra): {$todaySellFmt} VND/KG
+- Giá mua vào hôm nay: {$todayBuyFmt} VND/KG
+- Giá cao nhất 7 ngày: {$stats['high']} VND/KG
+- Giá thấp nhất 7 ngày: {$stats['low']} VND/KG
+- Mức thay đổi so với hôm qua: {$dailyChangePct}% ({$dailyLabel})
+- Mức thay đổi trong 7 ngày: {$stats['pct_change']}
+
+BẢNG GIÁ 7 NGÀY (Bạc Phú Quý 999, VND/KG):
 {$priceTable}
 
-📈 THỐNG KÊ:
-- Thay đổi: {$stats['pct_change']} ({$stats['trend']})
-- Cao nhất: {$stats['high']} VND/KG
-- Thấp nhất: {$stats['low']} VND/KG
-- Trung bình: {$stats['avg']} VND/KG
-- Giá mới nhất: {$stats['latest']} VND/KG
+Hãy phân tích và trả lời theo cấu trúc:
 
-YÊU CẦU:
-1. Viết 3-4 câu tiếng Việt, ngắn gọn, chuyên nghiệp
-2. Nêu xu hướng chính: tăng / giảm / đi ngang / tích lũy
-3. Nêu vùng giá hỗ trợ và kháng cự (dựa trên min/max)
-4. ĐƯA RA KHUYẾN NGHỊ rõ ràng: nên MUA VÀO, BÁN RA, hay GIỮ/CHỜ ĐỢI, kèm lý do ngắn gọn
-5. Giọng văn khách quan, phù hợp website tài chính
-6. KHÔNG sử dụng markdown, chỉ trả về text thuần
+1. Nhận định xu hướng hôm nay: tăng hay giảm (giải thích ngắn gọn)
+2. Nhận định xu hướng 7 ngày gần đây: tăng, giảm hay đi ngang
+3. Đánh giá xu hướng ngắn hạn sắp tới: có khả năng tăng hay giảm
+4. Khuyến nghị:
+   - Nếu đang giữ bạc → nên giữ hay bán
+   - Nếu chưa mua → nên mua hay chờ thêm
+
+Yêu cầu:
+- Viết ngắn gọn, dễ hiểu cho người không chuyên
+- Không dùng thuật ngữ kỹ thuật phức tạp
+- Kết luận rõ ràng: NÊN MUA / NÊN BÁN / NÊN CHỜ
+- KHÔNG dùng markdown, KHÔNG có tiêu đề dạng ##, KHÔNG đánh số 1. 2. 3., CHỈ trả về đoạn văn thuần
+- KHÔNG có lời chào, lời mở đầu kiểu "Chào bạn" hay "Với vai trò...", vào thẳng nội dung
+- Dùng số liệu THỰC TẾ từ dữ liệu đã cung cấp
 PROMPT;
 
         try {
-            $response = Http::timeout(15)->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}",
-                [
+            $url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$apiKey}";
+
+            $response = Http::timeout(30)
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept'       => 'application/json',
+                ])
+                ->post($url, [
                     'contents' => [['parts' => [['text' => $prompt]]]],
-                    'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 300],
-                ]
-            );
+                    'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 8192],
+                ]);
 
             if ($response->successful()) {
                 $text = $response->json('candidates.0.content.parts.0.text');
+                Log::info('[SilverTrend] OK with gemini-2.5-flash');
                 return $text ? trim($text) : null;
             }
 
-            Log::warning('[SilverTrend] Gemini error: ' . $response->status());
+            Log::warning('[SilverTrend] gemini-2.5-flash failed: ' . $response->status() . ' - ' . \Illuminate\Support\Str::limit($response->body(), 300));
             return null;
         } catch (\Exception $e) {
             Log::warning('[SilverTrend] Gemini exception: ' . $e->getMessage());

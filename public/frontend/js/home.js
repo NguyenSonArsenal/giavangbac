@@ -17,7 +17,7 @@
   const brandMult = { phuquy: 1, ancarat: 1, doji: 1, kimnganphuc: 1 };
 
   const brandUnitOptions = {
-    phuquy:      [{ unit:'KG',    mult:1, label:'KG'     }, { unit:'LUONG', mult:1, label:'Lượng' }],
+    phuquy:      [{ unit:'LUONG', mult:1, label:'Lượng' }, { unit:'KG',    mult:1, label:'KG'     }],
     ancarat:     [{ unit:'LUONG', mult:1, label:'Lượng'  }, { unit:'KG',    mult:1, label:'KG'    }],
     doji:        [{ unit:'LUONG', mult:1, label:'1 Lượng'}, { unit:'LUONG', mult:5, label:'5 Lượng'}],
     kimnganphuc: [{ unit:'LUONG', mult:1, label:'Lượng' }, { unit:'KG',    mult:1, label:'KG'    }],
@@ -39,13 +39,32 @@
         btn.classList.add('active');
         var newUnit = btn.dataset.unit;
         var newMult = parseInt(btn.dataset.mult) || 1;
-        brandUnit[activeBrand] = newUnit;
-        brandMult[activeBrand] = newMult;
-        document.querySelectorAll('.sv-tab[data-brand="' + activeBrand + '"]').forEach(function(t){ t.classList.remove('active'); });
-        var matchTab = document.querySelector('.sv-tab[data-brand="' + activeBrand + '"][data-unit="' + newUnit + '"][data-mult="' + newMult + '"]');
-        if (matchTab) matchTab.classList.add('active');
-        loadBrandPrice(activeBrand);
-        loadBrandPct(activeBrand, activePeriod);
+
+        // Sync tất cả thương hiệu
+        var allBrands = ['phuquy', 'ancarat', 'doji', 'kimnganphuc'];
+        allBrands.forEach(function(brand) {
+          var options = brandUnitOptions[brand] || [];
+          // Tìm option khớp unit (DOJI chỉ có LUONG → nếu click KG thì bỏ qua)
+          var matched = options.find(function(o) { return o.unit === newUnit && o.mult === newMult; });
+          if (!matched && newUnit === 'KG') {
+            // Brand không có KG (vd DOJI) → giữ nguyên LUONG
+            matched = options.find(function(o) { return o.unit === 'LUONG'; });
+          }
+          if (!matched) return;
+
+          brandUnit[brand] = matched.unit;
+          brandMult[brand] = matched.mult;
+
+          // Update brand card tabs UI
+          document.querySelectorAll('.sv-tab[data-brand="' + brand + '"]').forEach(function(t){ t.classList.remove('active'); });
+          var matchTab = document.querySelector('.sv-tab[data-brand="' + brand + '"][data-unit="' + matched.unit + '"][data-mult="' + matched.mult + '"]');
+          if (matchTab) matchTab.classList.add('active');
+
+          // Reload price & pct cho brand
+          loadBrandPrice(brand);
+          loadBrandPct(brand, activePeriod);
+        });
+
         loadSharedChart();
       });
     });
@@ -305,9 +324,31 @@
 
         var d = json.data;
 
-        // Hiển thị nội dung phân tích
+        // Hiển thị nội dung phân tích + highlight từ khóa
         body.classList.add('has-content');
-        body.textContent = d.analysis;
+        var text = d.analysis;
+        // Escape HTML
+        var div = document.createElement('div');
+        div.textContent = text;
+        var html = div.innerHTML;
+        // Giữ xuống dòng từ AI
+        html = html.replace(/\n/g, '<br>');
+        // Highlight từ khóa quan trọng
+        var highlights = [
+          { regex: /NÊN MUA|NÊN MUA VÀO|CÓ THỂ MUA VÀO/g, cls: 'hl-buy' },
+          { regex: /NÊN BÁN|NÊN BÁN RA|CÂN NHẮC BÁN RA/g, cls: 'hl-sell' },
+          { regex: /NÊN CHỜ|NÊN CHỜ ĐỢI|NÊN GIỮ|NÊN CHỜ THÊM/g, cls: 'hl-wait' },
+          { regex: /tăng mạnh|tăng nhẹ|xu hướng tăng/gi, cls: 'hl-up' },
+          { regex: /giảm mạnh|giảm nhẹ|giảm sâu|cắm đầu giảm|xu hướng giảm/gi, cls: 'hl-down' },
+          { regex: /đi ngang|tích lũy|ổn định/gi, cls: 'hl-flat' },
+          { regex: /Khuyến nghị:/g, cls: 'hl-label' },
+        ];
+        highlights.forEach(function(h) {
+          html = html.replace(h.regex, function(m) {
+            return '<span class="sv-hl ' + h.cls + '">' + m + '</span>';
+          });
+        });
+        body.innerHTML = html;
 
         // Thời gian cập nhật
         if (time && d.updated_at) {

@@ -14,7 +14,7 @@
   .tbl-wrap td { padding:10px 8px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:top; }
   .mono { font-family:'JetBrains Mono',monospace; }
 
-  .trend-analysis { max-width:500px; line-height:1.6; font-size:12.5px; color:#c8cfe0; }
+  .trend-analysis { line-height:1.6; font-size:12.5px; color:#c8cfe0; }
 
   .badge-src { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; }
   .badge-gemini { background:rgba(79,122,248,0.15); color:#4f7af8; }
@@ -145,13 +145,13 @@
             <table>
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Thời gian</th>
-                        <th>Nguồn</th>
-                        <th>Xu hướng</th>
-                        <th>% Thay đổi</th>
+                        <th style="width:30px">#</th>
+                        <th style="width:110px">Thời gian</th>
+                        <th style="width:70px">Nguồn</th>
+                        <th style="width:80px">Xu hướng</th>
+                        <th style="width:80px">% Thay đổi</th>
                         <th>Nội dung nhận định</th>
-                        <th>Đánh giá</th>
+                        <th style="width:100px">Đánh giá</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -179,7 +179,7 @@
                             </span>
                         </td>
                         <td>
-                            <div class="trend-analysis">{{ $log->analysis }}</div>
+                            <div class="trend-analysis">{!! nl2br(e($log->analysis)) !!}</div>
                         </td>
                         <td>
                             <div class="accuracy-cell" data-log-id="{{ $log->id }}">

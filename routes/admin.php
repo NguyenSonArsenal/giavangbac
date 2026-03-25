@@ -9,6 +9,8 @@ Route::get('logout', 'AuthController@logout')->name('auth.logout');
 Route::get('/', 'DashboardController@index')->name('dashboard');
 Route::get('stats', 'StatsController@index')->name('stats');
 
+Route::resource('category', 'CategoryController');
+
 Route::resource('post', 'PostController');
 Route::post('tinymce_editor/upload', 'PostController@upload')->name('tinymce_editor.upload');
 

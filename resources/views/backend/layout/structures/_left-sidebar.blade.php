@@ -9,6 +9,13 @@
           </a>
         </li>
 
+        <li class="sidebar-item {{ selectedMenu('category') }}">
+          <a class="sidebar-link waves-effect waves-dark {{ activeMenu('category') }}" href="{{ backendRoute('category.index') }}">
+            <i class="mdi mdi-folder"></i>
+            <span class="hide-menu">Danh mục</span>
+          </a>
+        </li>
+
         <li class="sidebar-item {{ selectedMenu('post') }}">
           <a class="sidebar-link waves-effect waves-dark {{ activeMenu('post') }}" href="{{ backendRoute('post.index') }}">
             <i class="mdi mdi-file-document"></i>

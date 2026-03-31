@@ -46,3 +46,6 @@ Route::get('post/{slug}', [PostController::class, 'show'])->name('post.show');
 // ── Liên hệ ──
 Route::get('/lien-he',  [ContactController::class, 'index'])->name('contact.index');
 Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
+
+// ── Bình luận ──
+Route::post('/post/{postId}/comment', [\App\Http\Controllers\Frontend\CommentController::class, 'store'])->name('comment.store');

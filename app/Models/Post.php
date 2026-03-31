@@ -63,6 +63,11 @@ class Post extends BaseModel
         return $this->belongsTo(Category::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

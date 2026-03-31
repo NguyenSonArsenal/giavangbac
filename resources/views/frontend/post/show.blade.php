@@ -176,5 +176,8 @@
     </div>
   </div>
 
+  {{-- Comment section --}}
+  @include('frontend.partials.comment-section')
+
   <a href="{{ route('fe.post.index') }}" class="post-back">← Quay lại danh sách bài viết</a>
 @endsection

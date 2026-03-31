@@ -29,6 +29,18 @@ class PostController extends Controller
             ->orderBy('id', 'asc')
             ->first(['id', 'title', 'slug']);
 
-        return view('frontend.post.show', compact('post', 'prevPost', 'nextPost'));
+        // Comments: root (approved) + replies
+        $comments = $post->comments()
+            ->approved()
+            ->rootComments()
+            ->with(['replies' => function ($q) {
+                $q->approved()->orderBy('created_at', 'asc');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $commentCount = $post->comments()->approved()->count();
+
+        return view('frontend.post.show', compact('post', 'prevPost', 'nextPost', 'comments', 'commentCount'));
     }
 }

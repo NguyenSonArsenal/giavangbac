@@ -37,6 +37,13 @@
           </a>
         </li>
 
+        <li class="sidebar-item {{ selectedMenu('comment') }}">
+          <a class="sidebar-link waves-effect waves-dark {{ activeMenu('comment') }}" href="{{ backendRoute('comment.index') }}">
+            <i class="mdi mdi-comment-text-outline"></i>
+            <span class="hide-menu">Bình luận</span>
+          </a>
+        </li>
+
         <li class="sidebar-item">
           <a class="sidebar-link waves-effect waves-dark" href="{{ backendRoute('auth.logout') }}">
             <i class="mdi mdi-logout"></i>

@@ -22,3 +22,7 @@ Route::get('contact/{id}', 'ContactController@show')->name('contact.show');
 Route::delete('contact/{id}', 'ContactController@destroy')->name('contact.destroy');
 Route::post('contact/{id}/toggle-read', 'ContactController@toggleRead')->name('contact.toggle-read');
 
+Route::get('comment', 'CommentController@index')->name('comment.index');
+Route::post('comment/{id}/reply', 'CommentController@reply')->name('comment.reply');
+Route::delete('comment/{id}', 'CommentController@destroy')->name('comment.destroy');
+

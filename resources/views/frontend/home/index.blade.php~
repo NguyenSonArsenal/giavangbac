@@ -426,7 +426,61 @@
   @endif
 
   {{-- ══ SECTION: Liên hệ ══ --}}
-  @include('frontend.partials.contact-section', ['variant' => 'home'])
+  <section class="contact-home-section" id="section-contact">
+    <div class="contact-home-header">
+      <div class="contact-home-header-icon">📩</div>
+      <div>
+        <h2>Liên hệ <span style="color:var(--blue,#4f7af8);font-style:italic">với chúng tôi</span></h2>
+        <p>Hãy để lại thông tin, chúng tôi sẽ liên hệ với bạn sớm nhất</p>
+      </div>
+    </div>
+    <div class="contact-home-wrapper">
+      <div class="contact-home-form-card">
+        <form class="contact-home-form" id="homeContactForm">
+          <input type="hidden" name="_token" value="{{ csrf_token() }}">
+          <div class="chf-row">
+            <div class="chf-group">
+              <label>Họ và tên <span class="chf-req">*</span></label>
+              <input type="text" name="name" placeholder="Nguyễn Văn A" required>
+              <div class="chf-error" id="hc-err-name"></div>
+            </div>
+            <div class="chf-group">
+              <label>Email <span class="chf-req">*</span></label>
+              <input type="email" name="email" placeholder="example@email.com" required>
+              <div class="chf-error" id="hc-err-email"></div>
+            </div>
+          </div>
+          <div class="chf-row">
+            <div class="chf-group">
+              <label>Số điện thoại</label>
+              <input type="text" name="phone" placeholder="0123456789">
+            </div>
+          </div>
+          <div class="chf-group">
+            <label>Tin nhắn <span class="chf-req">*</span></label>
+            <textarea name="message" placeholder="Nội dung tin nhắn..." required></textarea>
+            <div class="chf-error" id="hc-err-message"></div>
+          </div>
+          <button type="submit" class="chf-submit" id="homeContactBtn">Gửi tin nhắn</button>
+        </form>
+      </div>
+      <div class="contact-home-info">
+        <div class="chi-item">
+          <div class="chi-icon" style="background:linear-gradient(135deg,#ef4444,#f97316)">📍</div>
+          <div><div class="chi-label">Địa chỉ</div><div class="chi-value">LK24.20 KĐT Hinode Royal Park, Kim Chung, Hoài Đức, Hà Nội</div></div>
+        </div>
+        <div class="chi-item">
+          <div class="chi-icon" style="background:linear-gradient(135deg,#4f7af8,#6366f1)">📧</div>
+          <div><div class="chi-label">Email</div><div class="chi-value">hr@dktech.global</div></div>
+        </div>
+        <div class="chi-item">
+          <div class="chi-icon" style="background:linear-gradient(135deg,#ef4444,#ec4899)">🕐</div>
+          <div><div class="chi-label">Giờ làm việc</div><div class="chi-value">8h30–18h00</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="contact-toast" id="homeContactToast"></div>
 @endsection
 
 @push('scripts')

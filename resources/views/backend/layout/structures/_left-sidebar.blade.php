@@ -30,6 +30,13 @@
           </a>
         </li>
 
+        <li class="sidebar-item {{ selectedMenu('contact') }}">
+          <a class="sidebar-link waves-effect waves-dark {{ activeMenu('contact') }}" href="{{ backendRoute('contact.index') }}">
+            <i class="mdi mdi-email"></i>
+            <span class="hide-menu">Liên hệ</span>
+          </a>
+        </li>
+
         <li class="sidebar-item">
           <a class="sidebar-link waves-effect waves-dark" href="{{ backendRoute('auth.logout') }}">
             <i class="mdi mdi-logout"></i>

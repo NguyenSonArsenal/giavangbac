@@ -9,14 +9,15 @@ class HeaderComposer
 {
     public function compose(View $view): void
     {
-        // @todo store to cache, so whenever reorder / create / update / delete category => clear cache
+        // Categories table chưa có parent_id / sort → lấy flat list
         $menuCategories = Category::query()
-            ->whereNull('parent_id')
-            ->orderBy('sort')
-            ->with(['children' => function ($q) {
-                $q->orderBy('sort');
-            }])
-            ->get();
+            ->where('status', 1)
+            ->orderBy('name')
+            ->get()
+            ->each(function ($cat) {
+                // Giả lập children rỗng để header template không bị lỗi
+                $cat->setRelation('children', collect());
+            });
 
         $view->with('menuCategories', $menuCategories);
     }

@@ -621,7 +621,7 @@
       box-shadow: 0 4px 16px rgba(79,122,248,0.15);
     }
     .news-view-all-btn span { transition: transform .2s; }
-    .news-view-all-btn:hover span { transform: translateX(4px); }
+      .news-view-all-btn:hover span { transform: translateX(4px); }
 
     /* Mobile */
     @media (max-width: 600px) {

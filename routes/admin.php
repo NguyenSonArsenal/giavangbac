@@ -17,3 +17,8 @@ Route::post('tinymce_editor/upload', 'PostController@upload')->name('tinymce_edi
 Route::get('trend-log', 'TrendLogController@index')->name('trend-log.index');
 Route::post('trend-log/{id}/accuracy', 'TrendLogController@toggleAccuracy')->name('trend-log.accuracy');
 
+Route::get('contact', 'ContactController@index')->name('contact.index');
+Route::get('contact/{id}', 'ContactController@show')->name('contact.show');
+Route::delete('contact/{id}', 'ContactController@destroy')->name('contact.destroy');
+Route::post('contact/{id}/toggle-read', 'ContactController@toggleRead')->name('contact.toggle-read');
+

@@ -87,6 +87,8 @@
             </div>
           </div>
 
+          <a class="header_link {{ request()->routeIs('*contact*') ? 'is_active' : '' }}" href="{{ clientRoute('contact.index') }}">Liên hệ</a>
+
           @if(clientGuard()->check())
             <div class="header_dropdown">
               <a class="header_link" href="javascript:void(0);">Hi, <strong>{{ clientGuard()->user()->username }}</strong> <span class="header_caret">▾</span></a>
@@ -193,7 +195,7 @@
         </div>
 
         <a href="{{ clientRoute('tin_tuc') }}" class="drawer_link {{ request()->routeIs('*tin_tuc*') ? 'is_active' : '' }}">Tin tức</a>
-        <a href="{{ clientRoute('contact') }}" class="drawer_link {{ request()->routeIs('*contact*') ? 'is_active' : '' }}">Liên hệ</a>
+        <a href="{{ clientRoute('contact.index') }}" class="drawer_link {{ request()->routeIs('*contact*') ? 'is_active' : '' }}">Liên hệ</a>
       </nav>
     </div>
   </aside>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="csrf-token" content="{{ csrf_token() }}"/>
 
   @if(config('services.ga.measurement_id'))
   <!-- Google Analytics 4 -->
@@ -14,7 +15,7 @@
     gtag('config', '{{ config('services.ga.measurement_id') }}');
   </script>
   @endif
-
+  <link rel="icon" type="image/x-icon" href="{{ asset('frontend/image/favicon.png') }}">
   <title>@yield('title', 'Giá Vàng & Bạc – GiáVàng.vn')</title>
   <meta name="robots" content="index, follow"/>
   <meta property="og:site_name" content="GiáVàng.vn"/>

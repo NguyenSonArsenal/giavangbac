@@ -3,6 +3,7 @@
 use App\Http\Controllers\Frontend\ArticleController;
 use App\Http\Controllers\Frontend\BrandSilverController;
 use App\Http\Controllers\Frontend\CategoryController;
+use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\SitemapController;
@@ -42,4 +43,6 @@ Route::get('category',        [CategoryController::class, 'index'])->name('categ
 Route::get('category/{slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('post/{slug}', [PostController::class, 'show'])->name('post.show');
 
-
+// ── Liên hệ ──
+Route::get('/lien-he',  [ContactController::class, 'index'])->name('contact.index');
+Route::post('/lien-he', [ContactController::class, 'store'])->name('contact.store');

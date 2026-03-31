@@ -136,6 +136,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
         </a>
       </div>
     </div>
+
+    <a href="/lien-he" class="nav-link {{ ($activePage ?? '') === 'contact' ? 'active' : '' }}">📩 Liên Hệ</a>
   </nav>
 
   <div class="header-tag" style="margin-left:auto">
@@ -179,6 +181,8 @@ header{position:sticky;top:0;z-index:100;background:rgba(7,9,15,0.92);backdrop-f
     <a href="/bac-999-la-gi" class="drawer-link"><span>📖</span> Bạc 999 Là Gì?</a>
     <a href="/nen-mua-bac-o-dau" class="drawer-link"><span>🛒</span> Mua Bạc Ở Đâu?</a>
     <a href="/bac-co-phai-kenh-dau-tu-tot" class="drawer-link"><span>📈</span> Đầu Tư Bạc</a>
+    <div class="drawer-divider">Khác</div>
+    <a href="/lien-he" class="drawer-link"><span>📩</span> Liên Hệ</a>
   </div>
 </div>
 

@@ -168,6 +168,115 @@
     </div>
   </section>
 
+  <!-- ══ VÀNG THƯƠNG HIỆU: 2 thương hiệu + shared chart ══ -->
+  <section class="gold-compact-section">
+    <div class="sv-section-head">
+      <div class="sv-section-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff;">🥇</div>
+      <div>
+        <h2>Giá Vàng Thương Hiệu</h2>
+        <p>Bảo Tín Minh Châu · Bảo Tín Mạnh Hải · Cập nhật định kỳ</p>
+      </div>
+    </div>
+
+    <div class="sv-main-layout">
+      <!-- Gold Brand Cards -->
+      <div class="sv-brands-grid">
+        <!-- BTMC card -->
+        <div class="gold-brand-card active" id="gold-card-btmc" data-brand="btmc">
+          <div class="sv-card-head">
+            <div class="sv-card-logo" style="background:linear-gradient(135deg,#f59e0b,#d97706);font-size:10px;font-weight:800;color:#fff;letter-spacing:.03em;">BTMC</div>
+            <div class="sv-card-info">
+              <div class="sv-card-name" style="color:#f59e0b;">Bảo Tín Minh Châu</div>
+              <div class="sv-card-sub" id="btmc-updated">Đang tải...</div>
+            </div>
+          </div>
+          <div class="sv-card-tabs">
+            <button class="gold-tab active" data-brand="btmc" data-unit="NHAN_TRON">Nhẫn tròn trơn</button>
+            <button class="gold-tab"        data-brand="btmc" data-unit="MIENG_VRTL">Vàng miếng</button>
+          </div>
+          <div class="sv-card-prices">
+            <div class="sv-card-price-col">
+              <div class="sv-cprice-label">Mua vào</div>
+              <div class="sv-cprice-buy" id="btmc-buy">–</div>
+            </div>
+            <div class="sv-card-price-col">
+              <div class="sv-cprice-label">Bán ra</div>
+              <div class="sv-cprice-sell" id="btmc-sell">–</div>
+            </div>
+          </div>
+          <div class="sv-card-bottom-row">
+            <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="btmc-spread">–</span></div>
+          </div>
+        </div>
+
+        <!-- BTMH card -->
+        <div class="gold-brand-card" id="gold-card-btmh" data-brand="btmh">
+          <div class="sv-card-head">
+            <div class="sv-card-logo" style="background:linear-gradient(135deg,#dc2626,#991b1b);font-size:10px;font-weight:800;color:#fff;letter-spacing:.03em;">BTMH</div>
+            <div class="sv-card-info">
+              <div class="sv-card-name" style="color:#f87171;">Bảo Tín Mạnh Hải</div>
+              <div class="sv-card-sub" id="btmh-updated">Đang tải...</div>
+            </div>
+          </div>
+          <div class="sv-card-tabs">
+            <button class="gold-tab btmh-tab active" data-brand="btmh" data-unit="KGB">Nhẫn Kim Gia Bảo 24K</button>
+          </div>
+          <div class="sv-card-prices">
+            <div class="sv-card-price-col">
+              <div class="sv-cprice-label">Mua vào</div>
+              <div class="sv-cprice-buy" id="btmh-buy">–</div>
+            </div>
+            <div class="sv-card-price-col">
+              <div class="sv-cprice-label">Bán ra</div>
+              <div class="sv-cprice-sell" id="btmh-sell">–</div>
+            </div>
+          </div>
+          <div class="sv-card-bottom-row">
+            <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="btmh-spread">–</span></div>
+            <div style="font-size:10px;color:var(--muted);">đồng/chỉ</div>
+          </div>
+        </div>
+
+      </div><!-- /sv-brands-grid -->
+
+      <!-- ── Shared Chart ── -->
+      <div class="sv-shared-chart-wrap" style="border-color:rgba(245,197,24,0.2);">
+        <div class="sv-shared-chart-bar">
+
+          <!-- Brand switcher -->
+          <div class="sv-chart-brand-tabs">
+            <button class="gold-chart-brand active" data-brand="btmc" id="gold-chart-brand-btmc">Bảo Tín Minh Châu</button>
+            <button class="gold-chart-brand"        data-brand="btmh" id="gold-chart-brand-btmh">Bảo Tín Mạnh Hải</button>
+          </div>
+
+          <!-- Period tabs -->
+          <div class="sv-chart-period-tabs">
+            <button class="gold-prd" data-days="1">1D</button>
+            <button class="gold-prd active" data-days="7">7D</button>
+            <button class="gold-prd" data-days="30">1M</button>
+            <button class="gold-prd" data-days="90">3M</button>
+            <button class="gold-prd" data-days="365">1Y</button>
+          </div>
+
+          <!-- Unit tabs (ẩn khi xem BTMH) -->
+          <div class="sv-chart-unit-label" id="gold-chart-unit-lbl">VND/Lượng</div>
+          <div class="sv-chart-unit-tabs" id="gold-chart-unit-tabs">
+            <button class="gold-chart-unit-btn active" data-unit="NHAN_TRON">Nhẫn tròn trơn</button>
+            <button class="gold-chart-unit-btn"        data-unit="MIENG_VRTL">Vàng miếng</button>
+          </div>
+        </div>
+        <div class="sv-shared-canvas-wrap">
+          <div class="sv-loading" id="gold-chart-loading">
+            <div class="sv-spinner" style="border-top-color:#f59e0b;"></div> Đang tải biểu đồ...
+          </div>
+          <canvas id="goldSharedChart" style="display:none"></canvas>
+        </div>
+        <p class="sv-footnote" id="gold-chart-footnote">Nguồn: Bảo Tín Minh Châu · VND/Lượng</p>
+      </div>
+
+    </div><!-- /sv-main-layout -->
+  </section>
+
   <!-- ══ BẠC THƯƠNG HIỆU: Compact 3-column ══ -->
   <section class="sv-compact-section">
 
@@ -431,4 +540,5 @@
 
 @push('scripts')
 <script src="/frontend/js/home.js?v={{ filemtime(public_path('frontend/js/home.js')) }}"></script>
+<script src="/frontend/js/gold.js?v={{ filemtime(public_path('frontend/js/gold.js')) }}"></script>
 @endpush

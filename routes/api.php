@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\SilverTrendController;
 use App\Http\Controllers\Api\AncaratPriceController;
 use App\Http\Controllers\Api\DojiPriceController;
 use App\Http\Controllers\Api\KimNganPhucPriceController;
+use App\Http\Controllers\Api\BtmhGoldController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,5 +42,17 @@ Route::middleware('internal.api')->group(function () {
         Route::get('current', [KimNganPhucPriceController::class, 'currentPrice']);
         Route::get('history', [KimNganPhucPriceController::class, 'history']);
         Route::get('percent', [KimNganPhucPriceController::class, 'percent']);
+    });
+
+    // Gold price – BTMC
+    Route::prefix('gold/btmc')->group(function () {
+        Route::get('current', [App\Http\Controllers\Api\BtmcGoldController::class, 'currentPrice']);
+        Route::get('history', [App\Http\Controllers\Api\BtmcGoldController::class, 'history']);
+    });
+
+    // Gold price – BTMH (Bảo Tín Mạnh Hải)
+    Route::prefix('gold/btmh')->group(function () {
+        Route::get('current', [BtmhGoldController::class, 'currentPrice']);
+        Route::get('history', [BtmhGoldController::class, 'history']);
     });
 });

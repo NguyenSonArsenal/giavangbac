@@ -270,7 +270,7 @@
     }
     @media (max-width:600px) { .sv-brands-grid { grid-template-columns: 1fr; } }
 
-    .sv-brand-card {
+    .sv-brand-card, .gold-brand-card {
       background: var(--bg2);
       border: 1px solid rgba(176,190,197,0.15);
       border-radius: var(--radius);
@@ -278,10 +278,16 @@
       cursor: pointer;
       transition: border-color .2s, box-shadow .2s;
     }
-    .sv-brand-card:hover { border-color: rgba(176,190,197,0.35); }
+    .sv-brand-card:hover, .gold-brand-card:hover { border-color: rgba(176,190,197,0.35); }
+    .gold-brand-card:hover { border-color: rgba(245,197,24,0.35); }
+    
     .sv-brand-card.active {
       border-color: var(--blue);
       box-shadow: 0 0 0 1px var(--blue), 0 4px 20px rgba(79,122,248,0.12);
+    }
+    .gold-brand-card.active {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 1px #f59e0b, 0 4px 20px rgba(245,197,24,0.15);
     }
 
     .sv-card-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
@@ -294,18 +300,23 @@
     .sv-card-sub  { font-size:10.5px; color:var(--muted); margin-top:1px; }
 
     .sv-card-tabs { display:flex; gap:5px; margin-bottom:10px; }
-    .sv-tab {
+    .sv-tab, .gold-tab {
       padding: 4px 10px; border-radius: 5px;
       font-size: 11.5px; font-weight: 600;
       border: 1px solid var(--border); background: var(--bg3);
       color: var(--muted2); cursor: pointer;
       transition: all .18s; font-family:'Inter',sans-serif;
     }
-    .sv-tab:hover { border-color:var(--border2); color:var(--text); }
+    .sv-tab:hover, .gold-tab:hover { border-color:var(--border2); color:var(--text); }
     .sv-tab.active {
       background: linear-gradient(135deg,#b0bec5,#78909c);
       color:#07090f; border-color:transparent;
       box-shadow:0 2px 8px rgba(176,190,197,0.3);
+    }
+    .gold-tab.active {
+      background: linear-gradient(135deg,#fcd34d,#fbbf24);
+      color:#07090f; border-color:transparent;
+      box-shadow:0 2px 8px rgba(245,197,24,0.3);
     }
 
     .sv-card-prices { display:flex; align-items:flex-end; gap:12px; }
@@ -373,32 +384,41 @@
       box-shadow:0 2px 8px rgba(79,122,248,0.35);
     }
     .sv-chart-period-tabs { display:flex; gap:5px; margin-left:4px; }
-    .sv-prd {
+    .sv-prd, .gold-prd {
       padding: 5px 11px; border-radius:6px;
       font-size:11.5px; font-weight:600;
       border:1px solid var(--border); background:var(--bg3);
       color:var(--muted2); cursor:pointer;
       transition:all .18s; font-family:'Inter',sans-serif;
     }
-    .sv-prd:hover { border-color:var(--border2); color:var(--text); }
+    .sv-prd:hover, .gold-prd:hover { border-color:var(--border2); color:var(--text); }
     .sv-prd.active {
       background:rgba(79,122,248,0.18);
       color:var(--blue); border-color:rgba(79,122,248,0.4);
     }
+    .gold-prd.active {
+      background:rgba(245,197,24,0.18);
+      color:var(--gold2); border-color:rgba(245,197,24,0.4);
+    }
     .sv-chart-unit-label { margin-left:auto; font-size:11px; color:var(--muted); }
     .sv-chart-unit-tabs { display:flex; gap:5px; margin-left:8px; }
-    .sv-chart-unit-btn {
+    .sv-chart-unit-btn, .gold-chart-unit-btn {
       padding: 4px 11px; border-radius:5px;
       font-size:11.5px; font-weight:600;
       border:1px solid var(--border); background:var(--bg3);
       color:var(--muted2); cursor:pointer;
       transition:all .18s; font-family:'Inter',sans-serif;
     }
-    .sv-chart-unit-btn:hover { border-color:var(--border2); color:var(--text); }
+    .sv-chart-unit-btn:hover, .gold-chart-unit-btn:hover { border-color:var(--border2); color:var(--text); }
     .sv-chart-unit-btn.active {
       background:linear-gradient(135deg,#b0bec5,#78909c);
       color:#07090f; border-color:transparent;
       box-shadow:0 2px 8px rgba(176,190,197,0.3);
+    }
+    .gold-chart-unit-btn.active {
+      background:linear-gradient(135deg,#fcd34d,#fbbf24);
+      color:#07090f; border-color:transparent;
+      box-shadow:0 2px 8px rgba(245,197,24,0.3);
     }
     .sv-shared-canvas-wrap {
       padding:12px 16px 16px; position:relative; height:320px;
@@ -634,3 +654,69 @@
       .news-view-all { padding: 0 12px; }
     }
 
+
+    /*  GOLD COMPACT SECTION  */
+    .gold-compact-section { margin-top: 32px; }
+
+    /* 2 c?t: brands | chart  luôn cùng chi?u cao */
+    .gold-compact-section .sv-main-layout { align-items: stretch; }
+
+    /* Brand grid: 2 c?t d?u nhau */
+    .gold-compact-section .sv-brands-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    /* M?i card flex-column d? fill chi?u cao */
+    .gold-compact-section .gold-brand-card {
+      flex: 1; display: flex; flex-direction: column;
+    }
+    .gold-compact-section .sv-card-prices { flex: 1; align-items: flex-end; }
+
+    /* Chart: flex-column, canvas fill */
+    .gold-compact-section .sv-shared-chart-wrap { display: flex; flex-direction: column; }
+    .gold-compact-section .sv-shared-canvas-wrap { flex: 1; min-height: 260px; }
+
+    /* Chart bar gi? chi?u cao dù ?n unit tabs (visibility không d?i layout) */
+    .gold-compact-section .sv-shared-chart-bar {
+      flex-shrink: 0; flex-wrap: wrap; min-height: 48px;
+    }
+
+    @media (max-width: 900px) {
+      .gold-compact-section .sv-brands-grid { grid-template-columns: 1fr; }
+      .gold-compact-section .sv-shared-canvas-wrap { min-height: 200px; }
+    }
+
+    /* == GOLD COMPACT SECTION == */
+    .gold-compact-section { margin-top: 32px; }
+    .gold-compact-section .sv-main-layout { align-items: stretch; }
+    .gold-compact-section .sv-brands-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; align-items: stretch;
+    }
+    .gold-compact-section .gold-brand-card { flex: 1; display: flex; flex-direction: column; }
+    .gold-compact-section .sv-card-prices { flex: 1; align-items: flex-end; }
+    .gold-compact-section .sv-shared-chart-wrap { display: flex; flex-direction: column; }
+    .gold-compact-section .sv-shared-canvas-wrap { flex: 1; min-height: 260px; }
+    .gold-compact-section .sv-shared-chart-bar { flex-shrink: 0; flex-wrap: wrap; min-height: 48px; }
+    @media (max-width: 900px) {
+      .gold-compact-section .sv-brands-grid { grid-template-columns: 1fr; }
+      .gold-compact-section .sv-shared-canvas-wrap { min-height: 200px; }
+    }
+
+    /* Gold chart brand tabs - separate from silver sv-chart-brand to avoid conflicts */
+    .gold-chart-brand {
+      padding: 5px 13px; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border); background: var(--bg3);
+      color: var(--muted2); cursor: pointer;
+      transition: all .18s; font-family: 'Inter', sans-serif;
+    }
+    .gold-chart-brand:hover { border-color: var(--border2); color: var(--text); }
+    .gold-chart-brand.active {
+      background: linear-gradient(135deg, var(--blue), #6d28d9);
+      color: #fff; border-color: transparent;
+      box-shadow: 0 2px 8px rgba(79,122,248,0.35);
+    }

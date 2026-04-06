@@ -40,15 +40,17 @@ class GoldPriceHistory extends Model
     ];
 
     /**
-     * Lấy lịch sử N ngày theo nguồn và đơn vị, gom nhóm theo ngày (lấy bản ghi cuối mỗi ngày)
+     * Lấy lịch sử N ngày theo nguồn và đơn vị, gom nhóm theo ngày (lấy bản ghi cuối mỗi ngày).
+     * Lọc theo price_date (ngày giá trị) thay vì recorded_at để tránh bị ảnh hưởng
+     * bởi ON UPDATE CURRENT_TIMESTAMP khi update bản ghi.
      */
     public static function getHistory(string $source, string $unit, int $days): \Illuminate\Support\Collection
     {
-        $from = now()->subDays($days)->startOfDay();
+        $fromDate = now()->subDays($days)->startOfDay()->toDateString();
 
         return static::where('source', $source)
             ->where('unit', $unit)
-            ->where('recorded_at', '>=', $from)
+            ->where('price_date', '>=', $fromDate)
             ->orderBy('price_date')
             ->orderBy('recorded_at')
             ->get()

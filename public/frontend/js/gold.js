@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('btmc-nhan-buy',     nhan.buy_formatted  || fmtVnd(nhan.buy_price));
             setEl('btmc-nhan-sell',    nhan.sell_formatted || fmtVnd(nhan.sell_price));
             setEl('btmc-nhan-spread',  fmtVnd(nhan.sell_price - nhan.buy_price));
-            if (nhan.recorded_at) setEl('btmc-nhan-updated', nhan.recorded_at);
+            if (nhan.recorded_at) setEl('btmc-updated', nhan.recorded_at);
             rawSellPrices['btmc_NHAN_TRON'] = nhan.sell_price;
         }
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('btmc-mieng-buy',    mieng.buy_formatted  || fmtVnd(mieng.buy_price));
             setEl('btmc-mieng-sell',   mieng.sell_formatted || fmtVnd(mieng.sell_price));
             setEl('btmc-mieng-spread', fmtVnd(mieng.sell_price - mieng.buy_price));
-            if (mieng.recorded_at) setEl('btmc-mieng-updated', mieng.recorded_at);
+            if (mieng.recorded_at) setEl('btmc-updated', mieng.recorded_at);
             rawSellPrices['btmc_MIENG_VRTL'] = mieng.sell_price;
         }
         updateHighLowBadges();
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('pq-nhan-buy',    nhan.buy_formatted  || fmtVnd(nhan.buy_price));
             setEl('pq-nhan-sell',   nhan.sell_formatted || fmtVnd(nhan.sell_price));
             setEl('pq-nhan-spread', fmtVnd(nhan.sell_price - nhan.buy_price));
-            if (nhan.recorded_at) setEl('pq-nhan-updated', nhan.recorded_at);
+            if (nhan.recorded_at) setEl('pq-updated', nhan.recorded_at);
             rawSellPrices['pq_NHAN_TRON'] = nhan.sell_price;
         }
 
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('pq-sjc-buy',    sjc.buy_formatted  || fmtVnd(sjc.buy_price));
             setEl('pq-sjc-sell',   sjc.sell_formatted || fmtVnd(sjc.sell_price));
             setEl('pq-sjc-spread', fmtVnd(sjc.sell_price - sjc.buy_price));
-            if (sjc.recorded_at) setEl('pq-sjc-updated', sjc.recorded_at);
+            if (sjc.recorded_at) setEl('pq-updated', sjc.recorded_at);
             rawSellPrices['pq_SJC'] = sjc.sell_price;
         }
         updateHighLowBadges();
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('sjc-mien-buy',    mien.buy_formatted  || fmtVnd(mien.buy_price));
             setEl('sjc-mien-sell',   mien.sell_formatted || fmtVnd(mien.sell_price));
             setEl('sjc-mien-spread', fmtVnd(mien.sell_price - mien.buy_price));
-            if (mien.recorded_at) setEl('sjc-mien-updated', mien.recorded_at);
+            if (mien.recorded_at) setEl('sjc-updated', mien.recorded_at);
             rawSellPrices['sjc_VANG_MIEN'] = mien.sell_price;
         }
 
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setEl('sjc-nhan-buy',    nhan.buy_formatted  || fmtVnd(nhan.buy_price));
             setEl('sjc-nhan-sell',   nhan.sell_formatted || fmtVnd(nhan.sell_price));
             setEl('sjc-nhan-spread', fmtVnd(nhan.sell_price - nhan.buy_price));
-            if (nhan.recorded_at) setEl('sjc-nhan-updated', nhan.recorded_at);
+            if (nhan.recorded_at) setEl('sjc-updated', nhan.recorded_at);
             rawSellPrices['sjc_NHAN_TRON'] = nhan.sell_price;
         }
         updateHighLowBadges();

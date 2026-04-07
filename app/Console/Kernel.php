@@ -18,7 +18,6 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchBtmhGoldPrice::class,
 		\App\Console\Commands\FetchPhuquyGoldPrice::class,
 		\App\Console\Commands\FetchSjcGoldPrice::class,
-		\App\Console\Commands\FetchAllGoldPrice::class,
 		\App\Console\Commands\SeedBtmhGoldPrice::class,
 	];
 

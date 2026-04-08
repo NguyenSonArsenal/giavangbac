@@ -37,6 +37,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="/frontend/css/home.css?v={{ filemtime(public_path('frontend/css/home.css')) }}"/>
+<link rel="stylesheet" href="/frontend/css/gold-mobile.css?v={{ filemtime(public_path('frontend/css/gold-mobile.css')) }}"/>
 @endpush
 
 @section('content')
@@ -174,7 +175,7 @@
       <div class="sv-section-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff;">🥇</div>
       <div>
         <h2>Giá Vàng Thương Hiệu</h2>
-        <p>Bảo Tín Minh Châu · Bảo Tín Mạnh Hải · Phú Quý · SJC · Cập nhật định kỳ</p>
+        <p>Bảo Tín  Minh Châu · Bảo Tín Mạnh Hải · Phú Quý · SJC · Cập nhật định kỳ</p>
       </div>
     </div>
 
@@ -198,7 +199,7 @@
               <td class="col-brand" rowspan="2">
                 <div class="gold-brand-badge gold-brand-btmc">
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#f59e0b,#d97706)"></span>
-                  <span class="gold-brand-name" style="color:#f59e0b;">Bảo Tín<br>Minh Châu</span>
+                  <span class="gold-brand-name" style="color:#f59e0b;">Bảo Tín Minh Châu</span>
                 </div>
                 <div class="brand-updated-time" id="gold-btmc-updated">–</div>
               </td>
@@ -231,7 +232,7 @@
               <td class="col-brand">
                 <div class="gold-brand-badge gold-brand-btmh">
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#dc2626,#991b1b)"></span>
-                  <span class="gold-brand-name" style="color:#f87171;">Bảo Tín<br>Mạnh Hải</span>
+                  <span class="gold-brand-name" style="color:#f87171;">Bảo Tín Mạnh Hải</span>
                 </div>
                 <div class="brand-updated-time" id="gold-btmh-updated">–</div>
               </td>

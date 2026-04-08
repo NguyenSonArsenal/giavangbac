@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SeedBtmhGoldPrice extends Command
+class SeedGoldBtmh extends Command
 {
     protected $signature   = 'gold:seed-btmh {--force : Ghi đè bản ghi đã tồn tại}';
     protected $description = 'Backfill lịch sử giá vàng Bảo Tín Mạnh Hải (BTMH) từ API – fetch cả nhiều time_type để có đủ ~365 ngày';

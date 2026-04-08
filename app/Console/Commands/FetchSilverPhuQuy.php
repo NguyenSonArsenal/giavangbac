@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class FetchPhuQuySilverPrice extends Command
+class FetchSilverPhuQuy extends Command
 {
     protected $signature   = 'silver:fetch-phuquy';
     protected $description = 'Fetch giá bạc từ Phú Quý (giabac.vn) mỗi 30 phút';
@@ -26,7 +26,7 @@ class FetchPhuQuySilverPrice extends Command
 
     public function handle(): int
     {
-        $logFile = storage_path('logs/cron-phuquy.log');
+        $logFile = storage_path('logs/cron-silver-phuquy.log');
         $startAt = now()->format('Y-m-d H:i:s');
         file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-phuquy START\n", FILE_APPEND);
 

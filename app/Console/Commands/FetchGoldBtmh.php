@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\GoldPriceHistory;
 
-class FetchBtmhGoldPrice extends Command
+class FetchGoldBtmh extends Command
 {
     protected $signature   = 'gold:fetch-btmh';
     protected $description = 'Fetch giá vàng realtime từ Bảo Tín Mạnh Hải – dùng goldRateChart?time_type=day lấy giá mới nhất trong ngày';

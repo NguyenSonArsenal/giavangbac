@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SeedAncaratHistory extends Command
+class SeedHistoryAncarat extends Command
 {
     protected $signature   = 'silver:seed-ancarat-history';
     protected $description = 'Seed fake 1 năm lịch sử giá bạc Ancarat dựa trên giá hiện tại + biến động ngẫu nhiên';

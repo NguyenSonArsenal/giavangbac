@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\GoldPriceHistory;
 
-class FetchBtmcGoldPrice extends Command
+class FetchGoldBtmc extends Command
 {
     /**
      * The name and signature of the console command.

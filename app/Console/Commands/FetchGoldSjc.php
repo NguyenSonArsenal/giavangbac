@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\GoldPriceHistory;
 use Carbon\Carbon;
 
-class FetchSjcGoldPrice extends Command
+class FetchGoldSjc extends Command
 {
     protected $signature   = 'gold:fetch-sjc';
     protected $description = 'Fetch giá vàng SJC từ sjc.com.vn (AJAX API)';

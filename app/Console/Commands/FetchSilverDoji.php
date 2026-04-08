@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class FetchDojiSilverPrice extends Command
+class FetchSilverDoji extends Command
 {
     protected $signature   = 'silver:fetch-doji';
     protected $description = 'Fetch giá bạc từ DOJI (giabac.doji.vn) mỗi 30 phút';
@@ -21,7 +21,7 @@ class FetchDojiSilverPrice extends Command
 
     public function handle(): int
     {
-        $logFile = storage_path('logs/cron-doji.log');
+        $logFile = storage_path('logs/cron-silver-doji.log');
         $startAt = now()->format('Y-m-d H:i:s');
         file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-doji START\n", FILE_APPEND);
 

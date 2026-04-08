@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SeedDojiHistory extends Command
+class SeedHistoryDoji extends Command
 {
     protected $signature   = 'silver:seed-doji-history';
     protected $description = 'Seed lịch sử giá bạc DOJI từ file txt (data thực, group theo ngày)';

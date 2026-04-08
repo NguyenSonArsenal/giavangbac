@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class FetchKimNganPhucSilverPrice extends Command
+class FetchSilverKimNganPhuc extends Command
 {
     protected $signature   = 'silver:fetch-kimnganphuc';
     protected $description = 'Fetch giá bạc từ Kim Ngân Phúc (kimnganphuc.vn/bang-gia-bac) mỗi 30 phút';
@@ -16,7 +16,7 @@ class FetchKimNganPhucSilverPrice extends Command
 
     public function handle(): int
     {
-        $logFile = storage_path('logs/cron-kimnganphuc.log');
+        $logFile = storage_path('logs/cron-silver-kimnganphuc.log');
         $startAt = now()->format('Y-m-d H:i:s');
         file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-kimnganphuc START\n", FILE_APPEND);
         $this->info("[{$startAt}] Bắt đầu fetch giá bạc Kim Ngân Phúc...");

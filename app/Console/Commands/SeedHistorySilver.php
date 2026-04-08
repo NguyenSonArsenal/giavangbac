@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SeedSilverPriceHistory extends Command
+class SeedHistorySilver extends Command
 {
     protected $signature   = 'silver:seed-history {--days=365 : Số ngày cần seed}';
     protected $description = 'Backfill lịch sử giá bạc Phú Quý vào DB từ API (chạy 1 lần để có đủ data)';

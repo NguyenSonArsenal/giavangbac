@@ -8,18 +8,18 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
 	protected $commands = [
-		\App\Console\Commands\FetchPhuQuySilverPrice::class,
-		\App\Console\Commands\FetchAncaratSilverPrice::class,
-		\App\Console\Commands\FetchDojiSilverPrice::class,
-		\App\Console\Commands\FetchKimNganPhucSilverPrice::class,
+		\App\Console\Commands\FetchSilverPhuQuy::class,
+		\App\Console\Commands\FetchSilverAncarat::class,
+		\App\Console\Commands\FetchSilverDoji::class,
+		\App\Console\Commands\FetchSilverKimNganPhuc::class,
 		\App\Console\Commands\FetchAllSilverPrice::class,
 		\App\Console\Commands\GenerateSilverTrend::class,
-		\App\Console\Commands\FetchBtmcGoldPrice::class,
-		\App\Console\Commands\FetchBtmhGoldPrice::class,
-		\App\Console\Commands\FetchPhuquyGoldPrice::class,
+		\App\Console\Commands\FetchGoldBtmc::class,
+		\App\Console\Commands\FetchGoldBtmh::class,
+		\App\Console\Commands\FetchGoldPhuquy::class,
 		\App\Console\Commands\FetchAllGoldPrice::class,
-		\App\Console\Commands\FetchSjcGoldPrice::class,
-		\App\Console\Commands\SeedBtmhGoldPrice::class,
+		\App\Console\Commands\FetchGoldSjc::class,
+		\App\Console\Commands\SeedGoldBtmh::class,
 	];
 
 	/**
@@ -80,7 +80,7 @@ class Kernel extends ConsoleKernel
             ->everyTenMinutes()
             ->between('8:00', '19:00')
             ->withoutOverlapping();
-            
+
         $schedule->command('gold:fetch-btmc')
             ->weekdays()
             ->at('8:35')

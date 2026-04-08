@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\GoldPriceHistory;
 use Carbon\Carbon;
 
-class FetchPhuquyGoldPrice extends Command
+class FetchGoldPhuquy extends Command
 {
     protected $signature   = 'gold:fetch-phuquy';
     protected $description = 'Fetch giá vàng từ Phú Quý Group (banggia.phuquygroup.vn) – HTML scraping';

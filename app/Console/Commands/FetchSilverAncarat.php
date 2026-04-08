@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class FetchAncaratSilverPrice extends Command
+class FetchSilverAncarat extends Command
 {
     protected $signature   = 'silver:fetch-ancarat';
     protected $description = 'Fetch giá bạc từ Ancarat (giabac.ancarat.com) mỗi 30 phút';
@@ -22,7 +22,7 @@ class FetchAncaratSilverPrice extends Command
 
     public function handle(): int
     {
-        $logFile = storage_path('logs/cron-ancarat.log');
+        $logFile = storage_path('logs/cron-silver-ancarat.log');
         $startAt = now()->format('Y-m-d H:i:s');
         file_put_contents($logFile, "[{$startAt}] ▶ silver:fetch-ancarat START\n", FILE_APPEND);
 

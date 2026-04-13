@@ -291,6 +291,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const maxP = Math.max(...allP);
         const pad  = Math.round((maxP - minP) * 0.12) || 300000;
 
+        // Số điểm dữ liệu xác định cách vẽ dot
+        const numPoints = (data.dates || []).length;
+
+        // Khi chỉ có 1–2 điểm: dot to hơn + tắt fill để Chart.js không bị lỗi render
+        const isSparse     = numPoints <= 2;
+        const isFewPoints  = numPoints <= 12;
+        const pointRadius  = isSparse ? 7 : (isFewPoints ? 4 : 0);
+        const pointHover   = isSparse ? 9 : (isFewPoints ? 6 : 5);
+        const useFill      = !isSparse;   // 1–2 điểm: tắt fill, chỉ show dot
+        const useTension   = isSparse ? 0 : 0.3;
+
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -298,15 +309,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 datasets: [
                     {
                         label: 'Mua vao', data: data.buy_prices,
-                        borderColor: '#22c55e', backgroundColor: gradBuy,
-                        borderWidth: 2, tension: 0.3, fill: true,
-                        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#22c55e',
+                        borderColor: '#22c55e', backgroundColor: useFill ? gradBuy : 'transparent',
+                        borderWidth: isSparse ? 0 : 2, tension: useTension, fill: useFill,
+                        spanGaps: true,
+                        pointRadius: pointRadius,
+                        pointHoverRadius: pointHover,
+                        pointBackgroundColor: '#22c55e',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: pointRadius > 0 ? 1.5 : 0,
+                        pointHoverBackgroundColor: '#22c55e',
                     },
                     {
                         label: 'Ban ra', data: data.sell_prices,
-                        borderColor: '#ef4444', backgroundColor: gradSell,
-                        borderWidth: 2, tension: 0.3, fill: true,
-                        pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: '#ef4444',
+                        borderColor: '#ef4444', backgroundColor: useFill ? gradSell : 'transparent',
+                        borderWidth: isSparse ? 0 : 2, tension: useTension, fill: useFill,
+                        spanGaps: true,
+                        pointRadius: pointRadius,
+                        pointHoverRadius: pointHover,
+                        pointBackgroundColor: '#ef4444',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: pointRadius > 0 ? 1.5 : 0,
+                        pointHoverBackgroundColor: '#ef4444',
                     }
                 ]
             },

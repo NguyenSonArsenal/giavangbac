@@ -81,7 +81,11 @@ class SjcGoldController extends Controller
                 'unit'       => $unit,
                 'days'       => 1,
                 'type_label' => self::LABEL_MAP[$unit] ?? $unit,
-                'data'       => compact('dates', 'buyPrices', 'sellPrices'),
+                'data'       => [
+                    'dates'       => $dates,
+                    'buy_prices'  => $buyPrices,
+                    'sell_prices' => $sellPrices,
+                ],
             ]);
         }
 

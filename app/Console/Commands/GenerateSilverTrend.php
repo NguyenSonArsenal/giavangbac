@@ -113,15 +113,11 @@ class GenerateSilverTrend extends Command
             return "- {$p['date']} ({$p['day']}): Mua {$p['buy_price']} | Bán {$p['sell_price']}";
         })->implode("\n");
 
-        // Pre-compute cho heredoc
-        $todayDate        = $todayRecord->price_date->format('d/m/Y');
-        $todayBuyFmt      = $priceData[count($priceData) - 1]['buy_price'];
-        $todaySellFmt     = $priceData[count($priceData) - 1]['sell_price'];
-        $dailyChangeSign  = $dailyChange > 0 ? '+' : '';
-        $dailyChangeFmt   = number_format($dailyChange);
-        $dailyDir         = $dailyChangePct >= 0 ? 'tăng' : 'giảm';
-        $dailyAbs         = abs($dailyChangePct);
-        $dailyLabel       = $dailyAbs < 0.5 ? 'gần như không đổi' : ($dailyAbs < 2 ? "{$dailyDir} nhẹ" : ($dailyAbs < 5 ? "{$dailyDir} khá mạnh" : "cắm đầu {$dailyDir} mạnh"));
+        $todayBuyFmt     = $priceData[count($priceData) - 1]['buy_price'];
+        $todaySellFmt    = $priceData[count($priceData) - 1]['sell_price'];
+        $dailyDir        = $dailyChangePct >= 0 ? 'tăng' : 'giảm';
+        $dailyAbs        = abs($dailyChangePct);
+        $dailyLabel      = $dailyAbs < 0.5 ? 'gần như không đổi' : ($dailyAbs < 2 ? "{$dailyDir} nhẹ" : ($dailyAbs < 5 ? "{$dailyDir} khá mạnh" : "cắm đầu {$dailyDir} mạnh"));
 
         $prompt = <<<PROMPT
 Bạn là chuyên gia phân tích thị trường bạc.
@@ -155,31 +151,84 @@ Yêu cầu:
 - Dùng số liệu THỰC TẾ từ dữ liệu đã cung cấp
 PROMPT;
 
-        try {
-            $url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key={$apiKey}";
+        // Thử lần lượt các model (fallback nếu model trước bị quá tải)
+        // Mỗi model có API version riêng
+        $models = [
+            ['name' => 'gemini-3-flash-preview', 'version' => 'v1beta'], // mới nhất, ưu tiên
+            ['name' => 'gemini-2.5-flash',       'version' => 'v1beta'],
+            ['name' => 'gemini-2.0-flash',       'version' => 'v1beta'],
+            ['name' => 'gemini-1.5-flash',       'version' => 'v1'],
+            ['name' => 'gemini-1.5-flash-8b',    'version' => 'v1'],
+        ];
 
-            $response = Http::timeout(30)
-                ->withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Accept'       => 'application/json',
-                ])
-                ->post($url, [
-                    'contents' => [['parts' => [['text' => $prompt]]]],
-                    'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 8192],
-                ]);
-
-            if ($response->successful()) {
-                $text = $response->json('candidates.0.content.parts.0.text');
-                Log::info('[SilverTrend] OK with gemini-2.5-flash');
-                return $text ? trim($text) : null;
+        foreach ($models as $m) {
+            $result = $this->callGeminiModel($m['name'], $m['version'], $prompt, $apiKey);
+            if ($result !== null) {
+                return $result;
             }
-
-            Log::warning('[SilverTrend] gemini-2.5-flash failed: ' . $response->status() . ' - ' . \Illuminate\Support\Str::limit($response->body(), 300));
-            return null;
-        } catch (\Exception $e) {
-            Log::warning('[SilverTrend] Gemini exception: ' . $e->getMessage());
-            return null;
+            $this->warn("  ⚠ {$m['name']} thất bại, thử model tiếp theo...");
         }
+
+        return null;
+    }
+
+    /**
+     * Gọi một model Gemini cụ thể, retry khi 503 (overloaded), bỏ ngay khi 429 (quota)
+     */
+    private function callGeminiModel(string $model, string $version, string $prompt, string $apiKey): ?string
+    {
+        $url = "https://generativelanguage.googleapis.com/{$version}/models/{$model}:generateContent";
+        $maxTry  = 3;
+        $waitSec = 5;
+
+        for ($attempt = 1; $attempt <= $maxTry; $attempt++) {
+            try {
+                $response = Http::timeout(45)
+                    ->withHeaders([
+                        'Content-Type'   => 'application/json',
+                        'Accept'         => 'application/json',
+                        'x-goog-api-key' => $apiKey,  // dùng header thay vì ?key= param
+                    ])
+                    ->post($url, [
+                        'contents'         => [['parts' => [['text' => $prompt]]]],
+                        'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 8192],
+                    ]);
+
+                if ($response->successful()) {
+                    $text = $response->json('candidates.0.content.parts.0.text');
+                    Log::info("[SilverTrend] OK with {$model} ({$version}, attempt {$attempt})");
+                    return $text ? trim($text) : null;
+                }
+
+                $status = $response->status();
+
+                if ($status === 503 && $attempt < $maxTry) {
+                    // Server quá tải – chờ rồi retry
+                    $delay = $waitSec * $attempt;
+                    Log::warning("[SilverTrend] {$model} 503 overloaded – retry {$attempt}/{$maxTry} sau {$delay}s");
+                    $this->line("  ⏳ {$model}: quá tải, thử lại sau {$delay}s...");
+                    sleep($delay);
+                    continue;
+                }
+
+                if ($status === 429) {
+                    // Hết quota ngày – không retry, chuyển model ngay
+                    Log::warning("[SilverTrend] {$model} 429 quota – chuyển model tiếp theo");
+                    return null;
+                }
+
+                // Lỗi khác (400, 401, 404...) – bỏ model này
+                Log::warning("[SilverTrend] {$model} ({$version}) failed: {$status} - " . \Illuminate\Support\Str::limit($response->body(), 300));
+                return null;
+
+            } catch (\Exception $e) {
+                Log::warning("[SilverTrend] {$model} exception (attempt {$attempt}): " . $e->getMessage());
+                if ($attempt < $maxTry) { sleep($waitSec); continue; }
+                return null;
+            }
+        }
+
+        return null;
     }
 
     private function fallbackAnalysis(array $stats, float $pctChange): string

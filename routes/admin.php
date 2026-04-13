@@ -15,6 +15,7 @@ Route::resource('post', 'PostController');
 Route::post('tinymce_editor/upload', 'PostController@upload')->name('tinymce_editor.upload');
 
 Route::get('trend-log', 'TrendLogController@index')->name('trend-log.index');
+Route::post('trend-log/auto-evaluate', 'TrendLogController@autoEvaluate')->name('trend-log.auto-evaluate');
 Route::post('trend-log/{id}/accuracy', 'TrendLogController@toggleAccuracy')->name('trend-log.accuracy');
 
 Route::get('contact', 'ContactController@index')->name('contact.index');

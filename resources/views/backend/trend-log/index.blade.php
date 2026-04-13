@@ -52,16 +52,21 @@
     font-size:11px; color:#6e778c; font-style:italic;
   }
 
-  .pagination-wrap { display:flex; justify-content:center; margin-top:16px; }
-  .pagination-wrap .pagination { display:flex; gap:4px; list-style:none; padding:0; }
+  .pagination-wrap { display:flex; justify-content:center; margin-top:20px; }
+  .pagination-wrap nav { width:auto; }
+  .pagination-wrap .pagination { display:flex; gap:4px; list-style:none; padding:0; margin:0; align-items:center; }
+  .pagination-wrap .page-item { display:flex; }
   .pagination-wrap .page-link {
-    padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600;
+    padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600;
     background:#1e2a3a; border:1px solid rgba(255,255,255,0.08); color:#909ab2;
-    text-decoration:none; transition:all .2s;
+    text-decoration:none; transition:all .2s; white-space:nowrap;
+    display:inline-flex; align-items:center; line-height:1;
   }
   .pagination-wrap .page-link:hover { border-color:#4f7af8; color:#4f7af8; }
   .pagination-wrap .page-item.active .page-link { background:#4f7af8; color:#fff; border-color:#4f7af8; }
-  .pagination-wrap .page-item.disabled .page-link { opacity:0.4; cursor:not-allowed; }
+  .pagination-wrap .page-item.disabled .page-link { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+  /* Ẩn SVG icons to mặc định của Laravel Bootstrap 5 pagination */
+  .pagination-wrap svg { width:14px; height:14px; vertical-align:middle; }
 
   /* ── Confirm Modal ── */
   .confirm-overlay {
@@ -137,6 +142,27 @@
                 <div class="trend-card-label">Sai ✗</div>
                 <div class="trend-card-val" id="cardWrong" style="color:#f55252">{{ \App\Models\SilverTrendLog::where('is_accurate',false)->count() }}</div>
             </div>
+            @php
+                $total     = \App\Models\SilverTrendLog::whereNotNull('is_accurate')->count();
+                $correct   = \App\Models\SilverTrendLog::where('is_accurate', true)->count();
+                $rate      = $total > 0 ? round($correct / $total * 100) : 0;
+            @endphp
+            <div class="trend-card">
+                <div class="trend-card-label">Tỷ lệ đúng</div>
+                <div class="trend-card-val" style="color:{{ $rate >= 60 ? '#22c97a' : ($rate >= 40 ? '#f59e0b' : '#f55252') }}">{{ $rate }}%</div>
+            </div>
+        </div>
+
+        {{-- Auto-evaluate button --}}
+        <div style="margin-bottom:16px; display:flex; align-items:center; gap:12px;">
+            <button id="autoEvalBtn" onclick="runAutoEvaluate()" style="
+                padding:8px 20px; border-radius:8px; font-size:13px; font-weight:700;
+                background:linear-gradient(135deg,#4f7af8,#7c3aed); color:#fff;
+                border:none; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:6px;
+            ">
+                🤖 Tự động đánh giá AI
+            </button>
+            <span id="autoEvalMsg" style="font-size:12px; color:#6e778c;"></span>
         </div>
 
         {{-- Table --}}
@@ -151,7 +177,7 @@
                         <th style="width:80px">Xu hướng</th>
                         <th style="width:80px">% Thay đổi</th>
                         <th>Nội dung nhận định</th>
-                        <th style="width:100px">Đánh giá</th>
+                        <th style="width:130px">Đánh giá</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,14 +210,17 @@
                         <td>
                             <div class="accuracy-cell" data-log-id="{{ $log->id }}">
                                 @if($log->is_accurate === true)
-                                    <span class="acc-result is-correct">✓ Đúng</span>
+                                    <span class="acc-result is-correct" title="{{ $log->admin_note }}">✓ Đúng</span>
                                 @elseif($log->is_accurate === false)
-                                    <span class="acc-result is-wrong">✗ Sai</span>
+                                    <span class="acc-result is-wrong" title="{{ $log->admin_note }}">✗ Sai</span>
                                 @else
                                     <div class="accuracy-btns">
                                         <button class="acc-btn" onclick="confirmAccuracy({{ $log->id }}, true)" title="Đánh giá: Đúng">✓ Đúng</button>
                                         <button class="acc-btn" onclick="confirmAccuracy({{ $log->id }}, false)" title="Đánh giá: Sai">✗ Sai</button>
                                     </div>
+                                @endif
+                                @if($log->admin_note && str_starts_with($log->admin_note, 'Auto-eval'))
+                                    <div style="font-size:10px;color:#4f7af8;margin-top:3px;">🤖 auto</div>
                                 @endif
                             </div>
                         </td>
@@ -204,7 +233,7 @@
 
             @if($logs->hasPages())
                 <div class="pagination-wrap">
-                    {{ $logs->links() }}
+                    {{ $logs->links('pagination::bootstrap-4') }}
                 </div>
             @endif
         </div>
@@ -304,5 +333,48 @@ function submitAccuracy() {
 document.getElementById('confirmOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeConfirm();
 });
+
+// Auto-evaluate all pending logs
+function runAutoEvaluate() {
+    var btn = document.getElementById('autoEvalBtn');
+    var msg = document.getElementById('autoEvalMsg');
+    if (!btn) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Đang đánh giá...';
+    if (msg) msg.textContent = '';
+
+    fetch('{{ url("management/trend-log/auto-evaluate") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        btn.disabled = false;
+        btn.innerHTML = '🤖 Tự động đánh giá AI';
+        if (data.success) {
+            if (msg) {
+                msg.style.color = '#22c97a';
+                msg.textContent = '✅ ' + data.message;
+            }
+            // Reload sau 1.5s để cập nhật UI
+            setTimeout(function() { location.reload(); }, 1500);
+        } else {
+            if (msg) {
+                msg.style.color = '#f55252';
+                msg.textContent = '❌ ' + (data.message || 'Có lỗi xảy ra');
+            }
+        }
+    })
+    .catch(function(e) {
+        btn.disabled = false;
+        btn.innerHTML = '🤖 Tự động đánh giá AI';
+        if (msg) { msg.style.color = '#f55252'; msg.textContent = '❌ Lỗi kết nối: ' + e.message; }
+    });
+}
 </script>
 @endpush

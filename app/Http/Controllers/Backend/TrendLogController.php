@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\SilverTrendLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class TrendLogController extends Controller
 {
@@ -16,7 +17,7 @@ class TrendLogController extends Controller
     }
 
     /**
-     * AJAX: Toggle đánh giá đúng/sai
+     * AJAX: Toggle đánh giá đúng/sai thủ công
      */
     public function toggleAccuracy(Request $request, $id)
     {
@@ -26,5 +27,31 @@ class TrendLogController extends Controller
         $log->save();
 
         return response()->json(['success' => true, 'is_accurate' => $log->is_accurate]);
+    }
+
+    /**
+     * AJAX: Tự động đánh giá tất cả nhận định chưa được đánh giá
+     */
+    public function autoEvaluate(Request $request)
+    {
+        try {
+            Artisan::call('silver:evaluate-accuracy');
+            $output = Artisan::output();
+
+            // Đếm kết quả sau khi chạy
+            $total   = SilverTrendLog::whereNotNull('is_accurate')->count();
+            $correct = SilverTrendLog::where('is_accurate', true)->count();
+            $wrong   = SilverTrendLog::where('is_accurate', false)->count();
+            $rate    = $total > 0 ? round($correct / $total * 100) : 0;
+
+            return response()->json([
+                'success' => true,
+                'message' => "Đã đánh giá xong! Tỷ lệ đúng: {$correct}/{$total} ({$rate}%)",
+                'stats'   => compact('total', 'correct', 'wrong', 'rate'),
+                'output'  => $output,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

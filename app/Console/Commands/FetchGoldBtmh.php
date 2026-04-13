@@ -42,12 +42,23 @@ GQL;
     public function handle(): int
     {
         $logFile = storage_path('logs/cron-gold-btmh.log');
-        $startAt = now()->format('Y-m-d H:i:s');
-        file_put_contents($logFile, "[{$startAt}] ▶ gold:fetch-btmh START\n", FILE_APPEND);
 
-        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng BTMH (GraphQL)...');
+        // Helper: ghi đồng thời ra terminal và file log
+        $log = function(string $msg, string $level = 'line') use ($logFile) {
+            match($level) {
+                'info'  => $this->info($msg),
+                'warn'  => $this->warn($msg),
+                'error' => $this->error($msg),
+                default => $this->line($msg),
+            };
+            file_put_contents($logFile, $msg . "\n", FILE_APPEND);
+        };
+
         $inserted  = 0;
         $unchanged = 0;
+
+        file_put_contents($logFile, "\n▶ Chạy: gold:fetch-btmh\n", FILE_APPEND);
+        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng BTMH (GraphQL)...');
 
         try {
             // Gọi GraphQL API
@@ -68,17 +79,15 @@ GQL;
             ]);
 
             if (!$res->ok()) {
-                $this->error('❌ HTTP ' . $res->status());
+                $log('❌ HTTP ' . $res->status(), 'error');
                 Log::error('FetchBtmhGoldPrice: HTTP ' . $res->status());
-                file_put_contents($logFile, "[{$startAt}] ❌ HTTP {$res->status()}\n", FILE_APPEND);
                 return 1;
             }
 
             $items = $res->json('data.goldRates.items') ?? [];
 
             if (empty($items)) {
-                $this->warn('⚠ GraphQL trả về không có items');
-                file_put_contents($logFile, "[{$startAt}] ⚠ Không có items\n", FILE_APPEND);
+                $log('⚠ GraphQL trả về không có items', 'warn');
                 return 1;
             }
 
@@ -89,10 +98,10 @@ GQL;
             }
 
             foreach (self::GOLD_TYPES as $code => $unit) {
-                $this->line("  ── code={$code} → unit={$unit}");
+                $log("  ── code={$code} → unit={$unit}");
 
                 if (!isset($indexed[$code])) {
-                    $this->warn("  ⚠ Không tìm thấy code={$code} trong response");
+                    $log("  ⚠ Không tìm thấy code={$code} trong response", 'warn');
                     continue;
                 }
 
@@ -102,7 +111,7 @@ GQL;
 
                 // Bỏ qua nếu sell_price là placeholder (= 1) hoặc giá = 0
                 if ($buyPrice <= 0 || $sellPrice <= 1) {
-                    $this->warn("  ⚠ [{$code}] Giá không hợp lệ (Mua={$buyPrice} Bán={$sellPrice}), bỏ qua");
+                    $log("  ⚠ [{$code}] Giá không hợp lệ (Mua={$buyPrice} Bán={$sellPrice}), bỏ qua", 'warn');
                     continue;
                 }
 
@@ -133,7 +142,9 @@ GQL;
                     && (int) $lastRecord->buy_price  === $buyPrice
                     && (int) $lastRecord->sell_price === $sellPrice
                 ) {
-                    $this->line("  ⏭  [{$unit}] Giá không thay đổi (Mua={$buyForLog} Bán={$sellForLog}), bỏ qua");
+                    $lastRecord->recorded_at = $recordedAt;
+                    $lastRecord->save();
+                    $log("  🔄 [{$unit}]: giá không đổi (Mua={$buyForLog} Bán={$sellForLog}), đã cập nhật recorded_at → " . $recordedAt->format('H:i'));
                     $unchanged++;
                 } else {
                     GoldPriceHistory::create([
@@ -144,23 +155,18 @@ GQL;
                         'price_date'  => $recordedAt->toDateString(),
                         'recorded_at' => $recordedAt,
                     ]);
-                    $this->info("  ✅ [{$unit}] saved (Mua={$buyForLog} Bán={$sellForLog})");
+                    $log("  ✅ [{$unit}] saved (Mua={$buyForLog} Bán={$sellForLog})", 'info');
                     $inserted++;
                 }
             }
 
         } catch (\Exception $e) {
-            $this->error('💥 Error: ' . $e->getMessage());
+            $log('💥 Error: ' . $e->getMessage(), 'error');
             Log::error('FetchBtmhGoldPrice', ['error' => $e->getMessage()]);
-            file_put_contents($logFile, "[{$startAt}] 💥 {$e->getMessage()}\n", FILE_APPEND);
             return 1;
         }
 
-        $summary = $inserted > 0
-            ? "inserted: {$inserted} | unchanged: {$unchanged}"
-            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành BTMH Gold.');
-        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-btmh DONE – {$summary}\n", FILE_APPEND);
         return 0;
     }
 }

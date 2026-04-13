@@ -27,10 +27,23 @@ class FetchGoldSjc extends Command
     public function handle(): int
     {
         $logFile = storage_path('logs/cron-gold-sjc.log');
-        $startAt = now()->format('Y-m-d H:i:s');
-        $this->info("[{$startAt}] Fetch giá vàng SJC...");
+
+        // Helper: ghi đồng thời ra terminal và file log
+        $log = function(string $msg, string $level = 'line') use ($logFile) {
+            match($level) {
+                'info'  => $this->info($msg),
+                'warn'  => $this->warn($msg),
+                'error' => $this->error($msg),
+                default => $this->line($msg),
+            };
+            file_put_contents($logFile, $msg . "\n", FILE_APPEND);
+        };
+
         $inserted  = 0;
         $unchanged = 0;
+
+        file_put_contents($logFile, "\n▶ Chạy: gold:fetch-sjc\n", FILE_APPEND);
+        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng SJC...');
 
         try {
             // Dùng cURL để truyền User-Agent browser — Http facade bị SJC chặn (HTTP 400)
@@ -60,7 +73,7 @@ class FetchGoldSjc extends Command
                 throw new \RuntimeException("cURL error: $curlErr");
             }
             if ($httpCode !== 200) {
-                $this->warn("  ❌ HTTP {$httpCode}");
+                $log("  ❌ HTTP {$httpCode}", 'warn');
                 Log::error('FetchSjcGoldPrice: HTTP ' . $httpCode);
                 return 1;
             }
@@ -68,7 +81,7 @@ class FetchGoldSjc extends Command
             $json = json_decode($body, true);
 
             if (!isset($json['data']) || !is_array($json['data'])) {
-                $this->warn("  ⚠ Response không có data: " . substr($body, 0, 200));
+                $log("  ⚠ Response không có data: " . substr($body, 0, 200), 'warn');
                 Log::error('FetchSjcGoldPrice: invalid response', ['body' => substr($body, 0, 500)]);
                 return 1;
             }
@@ -91,7 +104,7 @@ class FetchGoldSjc extends Command
             }
             $recordedAt = $recordedAt ?? now();
 
-            $this->line("  🕐 Thời gian API: " . $recordedAt->format('d/m/Y H:i'));
+            $log("  🕐 Thời gian API: " . $recordedAt->format('d/m/Y H:i'));
 
             // Duyệt data
             $found = array_fill_keys(array_keys(self::TARGETS), false);
@@ -124,7 +137,9 @@ class FetchGoldSjc extends Command
                             && (int)$lastRecord->buy_price  === $buy
                             && (int)$lastRecord->sell_price === $sell
                         ) {
-                            $this->line("  ⏭  [{$unit}] Giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), bỏ qua");
+                            $lastRecord->recorded_at = $recordedAt;
+                            $lastRecord->save();
+                            $log("  🔄 [{$unit}]: giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), đã cập nhật recorded_at → " . $recordedAt->format('H:i'));
                             $unchanged++;
                         } else {
                             GoldPriceHistory::create([
@@ -135,7 +150,7 @@ class FetchGoldSjc extends Command
                                 'price_date'  => $recordedAt->toDateString(),
                                 'recorded_at' => $recordedAt,
                             ]);
-                            $this->info("  ✅ [{$unit}] saved (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . ") lúc " . $recordedAt->format('H:i'));
+                            $log("  ✅ [{$unit}] saved (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . ") lúc " . $recordedAt->format('H:i'), 'info');
                             $inserted++;
                         }
                     }
@@ -144,22 +159,18 @@ class FetchGoldSjc extends Command
 
             foreach ($found as $unit => $ok) {
                 if (!$ok) {
-                    $this->warn("  ⚠ Không tìm thấy unit: {$unit}");
+                    $log("  ⚠ Không tìm thấy unit: {$unit}", 'warn');
                     Log::warning('FetchSjcGoldPrice: unit not found', ['unit' => $unit]);
                 }
             }
 
         } catch (\Exception $e) {
-            $this->error("  💥 Error: " . $e->getMessage());
+            $log("  💥 Error: " . $e->getMessage(), 'error');
             Log::error('FetchSjcGoldPrice', ['error' => $e->getMessage()]);
             return 1;
         }
 
-        $summary = $inserted > 0
-            ? "inserted: {$inserted} | unchanged: {$unchanged}"
-            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành SJC Gold.');
-        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-sjc DONE – {$summary}\n", FILE_APPEND);
         return 0;
     }
 }

@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchSilverKimNganPhuc::class,
 		\App\Console\Commands\FetchAllSilverPrice::class,
 		\App\Console\Commands\GenerateSilverTrend::class,
+		\App\Console\Commands\EvaluateTrendAccuracy::class,
 		\App\Console\Commands\FetchGoldBtmc::class,
 		\App\Console\Commands\FetchGoldBtmh::class,
 		\App\Console\Commands\FetchGoldPhuquy::class,
@@ -145,6 +146,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('silver:generate-trend')
             ->weekdays()
             ->at('19:30')
+            ->withoutOverlapping();
+
+        // ── Tự động đánh giá độ chính xác nhận định AI ───────────────────────
+        // Chạy hàng ngày lúc 8:00 sáng – sau khi có giá D+1 của ngày hôm trước
+        $schedule->command('silver:evaluate-accuracy')
+            ->dailyAt('8:00')
             ->withoutOverlapping();
     }
 

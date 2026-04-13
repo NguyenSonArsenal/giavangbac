@@ -27,11 +27,23 @@ class FetchGoldPhuquy extends Command
     public function handle(): int
     {
         $logFile = storage_path('logs/cron-gold-phuquy.log');
-        $startAt = now()->format('Y-m-d H:i:s');
 
-        $this->info('[' . $startAt . '] Fetch giá vàng Phú Quý...');
+        // Helper: ghi đồng thời ra terminal và file log
+        $log = function(string $msg, string $level = 'line') use ($logFile) {
+            match($level) {
+                'info'  => $this->info($msg),
+                'warn'  => $this->warn($msg),
+                'error' => $this->error($msg),
+                default => $this->line($msg),
+            };
+            file_put_contents($logFile, $msg . "\n", FILE_APPEND);
+        };
+
         $inserted  = 0;
         $unchanged = 0;
+
+        file_put_contents($logFile, "\n▶ Chạy: gold:fetch-phuquy\n", FILE_APPEND);
+        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng Phú Quý...');
 
         try {
             $res = Http::timeout(20)
@@ -39,7 +51,7 @@ class FetchGoldPhuquy extends Command
                 ->get(self::URL);
 
             if (!$res->ok()) {
-                $this->warn("  ❌ HTTP " . $res->status());
+                $log("  ❌ HTTP " . $res->status(), 'warn');
                 Log::error('FetchPhuquyGoldPrice: HTTP ' . $res->status());
                 return 1;
             }
@@ -60,7 +72,7 @@ class FetchGoldPhuquy extends Command
             }
             $recordedAt = $recordedAt ?? now();
 
-            $this->line("  🕐 Thời gian API: " . $recordedAt->format('d/m/Y H:i'));
+            $log("  🕐 Thời gian API: " . $recordedAt->format('d/m/Y H:i'));
 
             // ── 2. Parse từng hàng trong bảng ───────────────────────────────
             // Regex bắt: <td class="...text-white fz-1-3em...">Tên sản phẩm</td>
@@ -70,7 +82,7 @@ class FetchGoldPhuquy extends Command
             preg_match_all($rowPattern, $html, $rowMatches);
 
             if (empty($rowMatches[1])) {
-                $this->warn("  ⚠ Không tìm được bảng giá");
+                $log("  ⚠ Không tìm được bảng giá", 'warn');
                 Log::error('FetchPhuquyGoldPrice: No rows found');
                 return 1;
             }
@@ -129,7 +141,9 @@ class FetchGoldPhuquy extends Command
                             && (int)$lastRecord->buy_price  === $buy
                             && (int)$lastRecord->sell_price === $sell
                         ) {
-                            $this->line("  ⏭  [{$unit}] \"{$name}\": giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), bỏ qua");
+                            $lastRecord->recorded_at = $recordedAt;
+                            $lastRecord->save();
+                            $log("  🔄 [{$unit}] \"{$name}\": giá không đổi (Mua=" . number_format($buy) . " Bán=" . number_format($sell) . "), đã cập nhật recorded_at → " . $recordedAt->format('H:i'));
                             $unchanged++;
                         } else {
                             GoldPriceHistory::create([
@@ -150,22 +164,18 @@ class FetchGoldPhuquy extends Command
             // Log keyword nào không tìm thấy
             foreach ($found as $keyword => $ok) {
                 if (!$ok) {
-                    $this->warn("  ⚠ Không tìm thấy: \"{$keyword}\"");
+                    $log("  ⚠ Không tìm thấy: \"{$keyword}\"", 'warn');
                     Log::warning('FetchPhuquyGoldPrice: keyword not found', ['keyword' => $keyword]);
                 }
             }
 
         } catch (\Exception $e) {
-            $this->error("  💥 Error: " . $e->getMessage());
+            $log("  💥 Error: " . $e->getMessage(), 'error');
             Log::error('FetchPhuquyGoldPrice', ['error' => $e->getMessage()]);
             return 1;
         }
 
-        $summary = $inserted > 0
-            ? "inserted: {$inserted} | unchanged: {$unchanged}"
-            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành Phú Quý Gold.');
-        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-phuquy DONE – {$summary}\n", FILE_APPEND);
         return 0;
     }
 }

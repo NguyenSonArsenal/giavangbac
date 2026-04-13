@@ -9,7 +9,7 @@ class TestController extends Controller
 {
     public function test()
     {
-        $a = Artisan::call('gold:fetch-btmc');
+        $a = Artisan::call('silver:generate-trend');
         dd($a);
     }
 }

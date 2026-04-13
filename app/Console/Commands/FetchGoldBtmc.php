@@ -26,12 +26,23 @@ class FetchGoldBtmc extends Command
     public function handle()
     {
         $logFile = storage_path('logs/cron-gold-btmc.log');
-        $startAt = now()->format('Y-m-d H:i:s');
 
-        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng BTMC...');
+        // Helper: ghi đồng thời ra terminal và file log
+        $log = function(string $msg, string $level = 'line') use ($logFile) {
+            match($level) {
+                'info'  => $this->info($msg),
+                'warn'  => $this->warn($msg),
+                'error' => $this->error($msg),
+                default => $this->line($msg),
+            };
+            file_put_contents($logFile, $msg . "\n", FILE_APPEND);
+        };
 
         $inserted  = 0;
         $unchanged = 0;
+
+        file_put_contents($logFile, "\n▶ Chạy: gold:fetch-btmc\n", FILE_APPEND);
+        $this->info('[' . now()->format('Y-m-d H:i:s') . '] Fetch giá vàng BTMC...');
 
         $url = "http://api.btmc.vn/api/BTMCAPI/getpricebtmc?key=3kd8ub1llcg9t45hnoh8hmn7t5kc2v";
 
@@ -39,9 +50,9 @@ class FetchGoldBtmc extends Command
             $res = Http::timeout(15)->get($url);
 
             if (!$res->ok()) {
-                $this->warn("  ❌ HTTP " . $res->status());
+                $log("  ❌ HTTP " . $res->status(), 'warn');
                 Log::error('FetchBtmcGoldPrice: HTTP ' . $res->status());
-                return 1; // FAILURE in laravel 8
+                return 1;
             }
 
             $str = ltrim($res->body(), "\xEF\xBB\xBF");
@@ -69,7 +80,7 @@ class FetchGoldBtmc extends Command
             }
 
             if (!$dataList) {
-                $this->warn("  ⚠ Không parse được data (JSON/XML)");
+                $log("  ⚠ Không parse được data (JSON/XML)", 'warn');
                 Log::error('FetchBtmcGoldPrice: Invalid response format');
                 return 1;
             }
@@ -139,7 +150,9 @@ class FetchGoldBtmc extends Command
                             ->first();
 
                         if ($lastRecord && (int)$lastRecord->buy_price === $buy && (int)$lastRecord->sell_price === $sell) {
-                            $this->line("  ⏭  History [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), bỏ qua');
+                            $lastRecord->recorded_at = $recordedAt;
+                            $lastRecord->save();
+                            $log("  🔄 [{$unit}]: giá không đổi (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . '), đã cập nhật recorded_at → ' . $recordedAt->format('H:i'));
                             $unchanged++;
                         } else {
                             GoldPriceHistory::create([
@@ -150,23 +163,19 @@ class FetchGoldBtmc extends Command
                                 'price_date'  => $recordedAt->toDateString(),
                                 'recorded_at' => $recordedAt,
                             ]);
-                            $this->info("  ✅ History [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')');
+                            $log("  ✅ [{$unit}] saved (Mua=" . number_format($buy) . ' Bán=' . number_format($sell) . ')', 'info');
                             $inserted++;
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            $this->error("  💥 Error: " . $e->getMessage());
+            $log("  💥 Error: " . $e->getMessage(), 'error');
             Log::error('FetchBtmcGoldPrice', ['error' => $e->getMessage()]);
             return 1;
         }
 
-        $summary = $inserted > 0
-            ? "inserted: {$inserted} | unchanged: {$unchanged}"
-            : "no changes (giá không đổi, unchanged: {$unchanged})";
         $this->info('[' . now()->format('Y-m-d H:i:s') . '] Hoàn thành BTMC Gold.');
-        file_put_contents($logFile, '[' . now()->format('Y-m-d H:i:s') . "] ✅ gold:fetch-btmc DONE – {$summary}\n", FILE_APPEND);
-        return 0; // SUCCESS
+        return 0;
     }
 }

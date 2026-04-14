@@ -294,13 +294,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Số điểm dữ liệu xác định cách vẽ dot
         const numPoints = (data.dates || []).length;
 
-        // Khi chỉ có 1–2 điểm: dot to hơn + tắt fill để Chart.js không bị lỗi render
+        // Khi chỉ có 1–2 điểm: dot to hơn, vẫn vẽ đường thẳng nối giữa 2 điểm
         const isSparse     = numPoints <= 2;
         const isFewPoints  = numPoints <= 12;
-        const pointRadius  = isSparse ? 7 : (isFewPoints ? 4 : 0);
-        const pointHover   = isSparse ? 9 : (isFewPoints ? 6 : 5);
-        const useFill      = !isSparse;   // 1–2 điểm: tắt fill, chỉ show dot
-        const useTension   = isSparse ? 0 : 0.3;
+        const pointRadius  = isSparse ? 4 : (isFewPoints ? 4 : 0);
+        const pointHover   = isSparse ? 6 : (isFewPoints ? 6 : 5);
+        const useFill      = !isSparse;   // 1–2 điểm: tắt fill gradient, chỉ vẽ đường + dot
+        const useTension   = isSparse ? 0 : 0.3;  // tension=0 để đường thẳng khi ít điểm
 
         chartInstance = new Chart(ctx, {
             type: 'line',
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         label: 'Mua vao', data: data.buy_prices,
                         borderColor: '#22c55e', backgroundColor: useFill ? gradBuy : 'transparent',
-                        borderWidth: isSparse ? 0 : 2, tension: useTension, fill: useFill,
+                        borderWidth: 2, tension: useTension, fill: useFill,
                         spanGaps: true,
                         pointRadius: pointRadius,
                         pointHoverRadius: pointHover,
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         label: 'Ban ra', data: data.sell_prices,
                         borderColor: '#ef4444', backgroundColor: useFill ? gradSell : 'transparent',
-                        borderWidth: isSparse ? 0 : 2, tension: useTension, fill: useFill,
+                        borderWidth: 2, tension: useTension, fill: useFill,
                         spanGaps: true,
                         pointRadius: pointRadius,
                         pointHoverRadius: pointHover,

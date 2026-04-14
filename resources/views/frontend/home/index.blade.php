@@ -434,36 +434,6 @@
         </div>
       </div>
 
-      <!-- DOJI -->
-      <div class="sv-brand-card" id="sv-card-doji" data-brand="doji">
-        <div class="sv-card-head">
-          <div class="sv-card-logo" style="background:linear-gradient(135deg,#dc2626,#991b1b)">🔴</div>
-          <div class="sv-card-info">
-            <div class="sv-card-name">Bạc 99.9 – DOJI</div>
-            <div class="sv-card-sub" id="dj-updated">Đang tải...</div>
-          </div>
-        </div>
-        <div class="sv-card-tabs">
-          <button class="sv-tab active" data-brand="doji" data-unit="LUONG" data-mult="1">1 Lượng</button>
-          <button class="sv-tab" data-brand="doji" data-unit="LUONG" data-mult="5">5 Lượng</button>
-        </div>
-        <div class="sv-card-prices">
-          <div class="sv-card-price-col">
-            <div class="sv-cprice-label">Mua vào</div>
-            <div class="sv-cprice-buy" id="dj-buy">–</div>
-          </div>
-          <div class="sv-card-price-col">
-            <div class="sv-cprice-label">Bán ra</div>
-            <div class="sv-cprice-sell" id="dj-sell">–</div>
-          </div>
-          <div class="sv-card-pct" id="dj-pct">–</div>
-        </div>
-        <div class="sv-card-bottom-row">
-          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="dj-spread">–</span></div>
-          <div class="sv-card-pct-days" id="dj-pct-days">7 ngày qua</div>
-        </div>
-      </div>
-
 
       <!-- Kim Ngân Phúc -->
       <div class="sv-brand-card" id="sv-card-kimnganphuc" data-brand="kimnganphuc">
@@ -495,6 +465,36 @@
         </div>
       </div>
 
+      <!-- DOJI -->
+      <div class="sv-brand-card" id="sv-card-doji" data-brand="doji">
+        <div class="sv-card-head">
+          <div class="sv-card-logo" style="background:linear-gradient(135deg,#dc2626,#991b1b)">🔴</div>
+          <div class="sv-card-info">
+            <div class="sv-card-name">Bạc 99.9 – DOJI</div>
+            <div class="sv-card-sub" id="dj-updated">Đang tải...</div>
+          </div>
+        </div>
+        <div class="sv-card-tabs">
+          <button class="sv-tab active" data-brand="doji" data-unit="LUONG" data-mult="1">1 Lượng</button>
+          <button class="sv-tab" data-brand="doji" data-unit="LUONG" data-mult="5">5 Lượng</button>
+        </div>
+        <div class="sv-card-prices">
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Mua vào</div>
+            <div class="sv-cprice-buy" id="dj-buy">–</div>
+          </div>
+          <div class="sv-card-price-col">
+            <div class="sv-cprice-label">Bán ra</div>
+            <div class="sv-cprice-sell" id="dj-sell">–</div>
+          </div>
+          <div class="sv-card-pct" id="dj-pct">–</div>
+        </div>
+        <div class="sv-card-bottom-row">
+          <div class="sv-card-spread">Chênh lệch: <span class="spread-val" id="dj-spread">–</span></div>
+          <div class="sv-card-pct-days" id="dj-pct-days">7 ngày qua</div>
+        </div>
+      </div>
+
     </div><!-- /sv-brands-grid -->
 
     <!-- Shared Chart -->
@@ -503,8 +503,8 @@
         <div class="sv-chart-brand-tabs">
           <button class="sv-chart-brand active" data-brand="phuquy">Phú Quý</button>
           <button class="sv-chart-brand" data-brand="ancarat">Ancarat</button>
-          <button class="sv-chart-brand" data-brand="doji">DOJI</button>
           <button class="sv-chart-brand" data-brand="kimnganphuc">Kim Ngân Phúc</button>
+          <button class="sv-chart-brand" data-brand="doji">DOJI</button>
         </div>
         <div class="sv-chart-period-tabs">
           <button class="sv-prd" data-days="1">1D</button>

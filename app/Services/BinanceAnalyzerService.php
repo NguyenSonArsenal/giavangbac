@@ -7,12 +7,36 @@ use Illuminate\Support\Facades\Log;
 /**
  * BinanceAnalyzerService
  * ─────────────────────────────────────────────────────────────────────────────
- * Gọi Binance public API, lấy nến OHLCV, tính MA7/MA25/MA99, RSI(14),
- * chấm điểm tín hiệu mua, trả về kết quả phân tích.
+ * Ưu tiên   : Binance public API (klines) — Hoạt động tốt local/VN
+ * Fallback 1: Bybit  public API — Không block IP Mỹ, có đủ OHLCV!
+ * Fallback 2: CoinGecko OHLC API — Dự phòng cuối cùng
+ * Tính toán: MA7 / MA25 / MA99, RSI(14), chấm điểm tín hiệu mua 0–12
  */
 class BinanceAnalyzerService
 {
-    const BASE_URL = 'https://api.binance.com';
+    const BASE_URL      = 'https://api.binance.com';
+    const BYBIT_URL     = 'https://api.bybit.com/v5/market/kline';
+    const COINGECKO_URL = 'https://api.coingecko.com/api/v3';
+
+    /** Binance interval → Bybit interval */
+    const BYBIT_INTERVAL_MAP = [
+        '1m'  => '1',
+        '5m'  => '5',
+        '15m' => '15',
+        '30m' => '30',
+        '1h'  => '60',
+        '2h'  => '120',
+        '4h'  => '240',
+        '1d'  => 'D',
+    ];
+
+    /** Map Binance symbol → CoinGecko coin id */
+    const COINGECKO_MAP = [
+        'BNBUSDT'  => 'binancecoin',
+        'BTCUSDT'  => 'bitcoin',
+        'ETHUSDT'  => 'ethereum',
+        'XAUTUSDT' => 'tether-gold',
+    ];
 
     /**
      * Phân tích 1 cặp coin.
@@ -201,9 +225,10 @@ class BinanceAnalyzerService
         ];
     }
 
-    // ── Private: Gọi Binance Klines API ─────────────────────────────────────
+    // ── Private: Gọi Binance Klines API (Primary) ──────────────────────────
     private function fetchKlines(string $symbol, string $interval, int $limit): ?array
     {
+        // ── Bước 1: Thử Binance trước ───────────────────────────────────────
         $url = self::BASE_URL . '/api/v3/klines?' . http_build_query([
             'symbol'   => $symbol,
             'interval' => $interval,
@@ -228,21 +253,163 @@ class BinanceAnalyzerService
 
         if ($curlErr) {
             Log::error("BinanceAnalyzer: cURL error [{$symbol}]", ['error' => $curlErr]);
+        } elseif ($httpCode === 200) {
+            $data = json_decode($body, true);
+            if (is_array($data) && count($data) >= 30) {
+                return $data; // Binance thanh cong
+            }
+        } else {
+            Log::warning("BinanceAnalyzer: Binance HTTP {$httpCode} [{$symbol}] — thu Bybit...");
+        }
+
+        // Buoc 2: Fallback Bybit (khong block IP My)
+        $bybitData = $this->fetchFromBybit($symbol, $interval, $limit);
+        if ($bybitData) {
+            return $bybitData;
+        }
+
+        // Buoc 3: Fallback CoinGecko (du phong cuoi)
+        return $this->fetchFromCoinGecko($symbol);
+    }
+
+    // Goi Bybit Klines API (Fallback 1 — khong block IP My, co OHLCV day du)
+    private function fetchFromBybit(string $symbol, string $interval, int $limit): ?array
+    {
+        $bybitInterval = self::BYBIT_INTERVAL_MAP[$interval] ?? '60';
+
+        $url = self::BYBIT_URL . '?' . http_build_query([
+            'category' => 'spot',
+            'symbol'   => $symbol,
+            'interval' => $bybitInterval,
+            'limit'    => min($limit, 200),
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTPHEADER     => [
+                'Accept: application/json',
+                'User-Agent: Mozilla/5.0 (compatible; TradingBot/1.0)',
+            ],
+        ]);
+
+        $body     = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlErr) {
+            Log::error("Bybit: cURL error [{$symbol}]", ['error' => $curlErr]);
             return null;
         }
 
         if ($httpCode !== 200) {
-            Log::error("BinanceAnalyzer: HTTP {$httpCode} [{$symbol}]");
+            Log::error("Bybit: HTTP {$httpCode} [{$symbol}]");
             return null;
         }
 
-        $data = json_decode($body, true);
-        if (!is_array($data) || count($data) < 30) {
-            Log::error("BinanceAnalyzer: Du lieu khong hop le [{$symbol}]");
+        $json = json_decode($body, true);
+        $list = $json['result']['list'] ?? null;
+
+        if (!is_array($list) || count($list) < 30) {
+            Log::error("Bybit: Du lieu khong hop le [{$symbol}]");
             return null;
         }
 
-        return $data;
+        Log::info("Bybit: Da lay " . count($list) . " nen [{$symbol}] (fallback 1 thanh cong)");
+        return $this->convertBybitToKlines($list);
+    }
+
+    /**
+     * Convert Bybit klines sang Binance format.
+     * Bybit:   [startTime, open, high, low, close, volume, turnover]  (moi -> cu)
+     * Binance: [ts, open, high, low, close, volume, ...]              (cu -> moi)
+     */
+    private function convertBybitToKlines(array $list): array
+    {
+        // Bybit tra newest-first, can reverse thanh oldest-first
+        $reversed = array_reverse($list);
+
+        return array_map(function ($candle) {
+            return [
+                (int)$candle[0],    // 0: timestamp
+                (string)$candle[1], // 1: open
+                (string)$candle[2], // 2: high
+                (string)$candle[3], // 3: low
+                (string)$candle[4], // 4: close
+                (string)$candle[5], // 5: volume (Bybit co volume day du!)
+            ];
+        }, $reversed);
+    }
+
+    // ── Private: Gọi CoinGecko OHLC API (Fallback) ─────────────────────────
+    private function fetchFromCoinGecko(string $symbol): ?array
+    {
+        $coinId = self::COINGECKO_MAP[$symbol] ?? null;
+        if (!$coinId) {
+            Log::error("BinanceAnalyzer: Không có CoinGecko map cho [{$symbol}]");
+            return null;
+        }
+
+        // Lấy 30 ngày OHLC, mỗi điểm = 1 giờ (đủ để tính MA99)
+        $url = self::COINGECKO_URL . "/coins/{$coinId}/ohlc?vs_currency=usd&days=30";
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 20,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_HTTPHEADER     => [
+                'Accept: application/json',
+                'User-Agent: Mozilla/5.0 (compatible; TradingBot/1.0)',
+            ],
+        ]);
+
+        $body     = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlErr) {
+            Log::error("CoinGecko: cURL error [{$symbol}]", ['error' => $curlErr]);
+            return null;
+        }
+
+        if ($httpCode !== 200) {
+            Log::error("CoinGecko: HTTP {$httpCode} [{$symbol}]");
+            return null;
+        }
+
+        $raw = json_decode($body, true);
+        if (!is_array($raw) || count($raw) < 30) {
+            Log::error("CoinGecko: Dữ liệu không hợp lệ [{$symbol}]");
+            return null;
+        }
+
+        Log::info("CoinGecko: Đã lấy " . count($raw) . " nến [{$symbol}] (fallback thành công)");
+        return $this->convertCoinGeckoToKlines($raw);
+    }
+
+    /**
+     * Convert CoinGecko OHLC format sang Binance klines format.
+     * CoinGecko: [timestamp_ms, open, high, low, close]
+     * Binance:   [ts, open, high, low, close, volume, ...] (index 1-5)
+     */
+    private function convertCoinGeckoToKlines(array $raw): array
+    {
+        return array_map(function ($candle) {
+            // Binance klines: index 0=ts, 1=open, 2=high, 3=low, 4=close, 5=volume
+            return [
+                $candle[0],            // 0: timestamp
+                (string)$candle[1],    // 1: open
+                (string)$candle[2],    // 2: high
+                (string)$candle[3],    // 3: low
+                (string)$candle[4],    // 4: close
+                '0',                   // 5: volume (CoinGecko OHLC không có volume)
+            ];
+        }, $raw);
     }
 
     // ── Private: Tính Moving Average ─────────────────────────────────────────

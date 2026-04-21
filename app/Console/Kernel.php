@@ -163,7 +163,7 @@ class Kernel extends ConsoleKernel
         // Khung nen 1H → check moi 15 phut (bat tin hieu som, khong qua nhieu)
         // Gio VN: 08:00–23:59 | Moi ngay: 64 lan check
         $schedule->command('crypto:scan-signal')
-            ->everyTenMinutes()          // 15 phut/lan — hop ly voi khung 1H
+            ->everyMinute()          // 15 phut/lan — hop ly voi khung 1H
             ->between('08:00', '00:00')      // 8 gio sang den nua dem
             ->withoutOverlapping();
 

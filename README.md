@@ -7,7 +7,7 @@
 * Apache
     - 2.4
 * PHP
-    - 7.4
+    - 8.2
 * Laravel
     - 8.x
 * Composer
@@ -63,3 +63,26 @@ npm install laravel-mix --save-dev
 backend: /management/login 
     admin@gmail.com/admin
 ```
+
+
+### Using docker ###
+```
+# 1. Clone source
+git clone <repo>
+cd giavangbac
+
+# 2. Copy .env (vì .env không commit lên git)
+cp .env.example .env
+# Sửa thông tin DB cho phù hợp
+
+# 3. Chạy lên
+docker compose up -d --build
+
+# 4. Setup Laravel lần đầu
+docker exec -it php-laravel php artisan migrate
+docker exec -it php-laravel php artisan db:seed  # nếu có seeder
+
+connect navicat: new connection: 127.0.0.1/3307/root/123456
+```
+
+

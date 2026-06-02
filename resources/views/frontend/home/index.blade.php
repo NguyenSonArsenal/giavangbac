@@ -59,12 +59,12 @@
           "symbols": [
             {"proName": "OANDA:XAUUSD",       "title": "Vàng – Gold"},
             {"proName": "OANDA:XAGUSD",       "title": "Bạc – Silver"},
+            {"proName": "BINANCE:WLDUSDT",    "title": "Worldcoin – WLD"},
             {"proName": "BINANCE:BNBUSDT",    "title": "BNB – Binance Coin"},
             {"proName": "FX_IDC:USDVND",      "title": "USD/VND"},
             {"proName": "BITSTAMP:BTCUSD",    "title": "Bitcoin – BTC"},
             {"proName": "BITSTAMP:ETHUSD",    "title": "Ethereum – ETH"},
-            {"proName": "BINANCE:SOLUSDT",    "title": "Solana – SOL"},
-            {"proName": "BINANCE:WLDUSDT",    "title": "Worldcoin – WLD"}
+            {"proName": "BINANCE:SOLUSDT",    "title": "Solana – SOL"}
           ],
           "showSymbolLogo": true,
           "colorTheme": "dark",

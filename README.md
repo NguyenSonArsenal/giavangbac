@@ -16,6 +16,7 @@
     - v16.18.1
 * Npm
     - 8.19.2
+* GitHub Actions + SSH
 
 
 ## Deploy
@@ -84,5 +85,7 @@ docker exec -it php-laravel php artisan db:seed  # nếu có seeder
 
 connect navicat: new connection: 127.0.0.1/3307/root/123456
 ```
+
+
 
 

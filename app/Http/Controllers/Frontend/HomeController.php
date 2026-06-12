@@ -40,4 +40,9 @@ class HomeController extends Controller
             'featuredPost', 'latestPosts', 'newsCategories'
         ));
     }
+
+    public function jenkin()
+    {
+        dd('jenkin v1');
+    }
 }

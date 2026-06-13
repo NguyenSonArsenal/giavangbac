@@ -221,7 +221,7 @@
           </thead>
           <tbody id="gold-table-body">
             <!-- BTMH – Kim Gia Bảo -->
-            <tr class="gold-tr gold-tr-btmh gold-tr-clickable" data-brand="btmh" data-unit="KGB">
+            <tr class="gold-tr gold-tr-btmh gold-tr-clickable active" data-brand="btmh" data-unit="KGB">
               <td class="col-brand">
                 <div class="gold-brand-badge gold-brand-btmh">
                   <span class="gold-brand-dot" style="background:linear-gradient(135deg,#dc2626,#991b1b)"></span>
@@ -290,8 +290,8 @@
 
           <!-- Period tabs -->
           <div class="sv-chart-period-tabs">
-            <button class="gold-prd" data-days="1">1D</button>
-            <button class="gold-prd active" data-days="7">7D</button>
+            <button class="gold-prd active" data-days="1">1D</button>
+            <button class="gold-prd" data-days="7">7D</button>
             <button class="gold-prd" data-days="30">1M</button>
             <button class="gold-prd" data-days="90">3M</button>
             <button class="gold-prd" data-days="365">1Y</button>

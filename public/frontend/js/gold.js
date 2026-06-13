@@ -4,17 +4,15 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // State
-    let activeBrand    = 'btmc';
-    let activeUnit     = { btmc: 'NHAN_TRON', btmh: 'KGB', phuquy: 'NHAN_TRON', sjc: 'VANG_MIEN' };
-    let chartDays      = 7;
+    let activeBrand    = 'btmh';
+    let activeUnit     = { btmh: 'KGB', phuquy: 'NHAN_TRON' };
+    let chartDays      = 1;
     let chartInstance  = null;
 
     // API endpoints
     const API = {
-        btmc:   { current: '/api/gold/btmc/current',   history: '/api/gold/btmc/history'   },
         btmh:   { current: '/api/gold/btmh/current',   history: '/api/gold/btmh/history'   },
         phuquy: { current: '/api/gold/phuquy/current', history: '/api/gold/phuquy/history' },
-        sjc:    { current: '/api/gold/sjc/current',    history: '/api/gold/sjc/history'    },
     };
 
     // DOM refs
@@ -31,18 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Unit tabs config per brand
     const unitTabsConfig = {
-        btmc: [
-            { unit: 'NHAN_TRON',  label: 'Nhan tron' },
-            { unit: 'MIENG_VRTL', label: 'Vang mieng' },
-        ],
         btmh:   null, // 1 loai, an tabs
         phuquy: [
             { unit: 'NHAN_TRON', label: 'Nhan tron' },
             { unit: 'SJC',       label: 'Vang mieng SJC' },
-        ],
-        sjc: [
-            { unit: 'VANG_MIEN', label: 'Vang mieng' },
-            { unit: 'NHAN_TRON', label: 'Vang nhan' },
         ],
     };
 
@@ -182,13 +172,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateHighLowBadges() {
         const SELL_IDS = [
-            { sellId: 'btmc-nhan-sell',  rawKey: 'btmc_NHAN_TRON'  },
-            { sellId: 'btmc-mieng-sell', rawKey: 'btmc_MIENG_VRTL' },
             { sellId: 'btmh-sell',       rawKey: 'btmh_KGB'        },
             { sellId: 'pq-nhan-sell',    rawKey: 'pq_NHAN_TRON'    },
             { sellId: 'pq-sjc-sell',     rawKey: 'pq_SJC'          },
-            { sellId: 'sjc-mien-sell',   rawKey: 'sjc_VANG_MIEN'   },
-            { sellId: 'sjc-nhan-sell',   rawKey: 'sjc_NHAN_TRON'   },
         ];
 
         const entries     = SELL_IDS.map(r => ({ ...r, price: rawSellPrices[r.rawKey] || 0 }));
@@ -414,15 +400,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Init
-    loadBtmcCurrent();
     loadBtmhCurrent();
     loadPhuquyCurrent();
-    loadSjcCurrent();
-    updateUnitTabs('btmc');
-    loadChart();
+    setActiveRow('btmh', 'KGB');
 
-    setInterval(loadBtmcCurrent,   3 * 60 * 1000);
     setInterval(loadBtmhCurrent,  10 * 60 * 1000);
     setInterval(loadPhuquyCurrent, 5 * 60 * 1000);
-    setInterval(loadSjcCurrent,   10 * 60 * 1000);
 });

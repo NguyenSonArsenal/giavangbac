@@ -290,8 +290,8 @@
 
           <!-- Period tabs -->
           <div class="sv-chart-period-tabs">
-            <button class="gold-prd active" data-days="1">1D</button>
-            <button class="gold-prd" data-days="7">7D</button>
+            <button class="gold-prd" data-days="1">1D</button>
+            <button class="gold-prd active" data-days="7">7D</button>
             <button class="gold-prd" data-days="30">1M</button>
             <button class="gold-prd" data-days="90">3M</button>
             <button class="gold-prd" data-days="365">1Y</button>

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // State
     let activeBrand    = 'btmh';
     let activeUnit     = { btmh: 'KGB', phuquy: 'NHAN_TRON' };
-    let chartDays      = 1;
+    let chartDays      = 7;
     let chartInstance  = null;
 
     // API endpoints

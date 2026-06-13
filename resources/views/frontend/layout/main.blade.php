@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {{-- One-Time Nonce Token – dùng để xác thực mọi API request --}}
-  <meta name="api-nonce" content="{{ \App\Services\ApiNonceService::generate() }}">
   <title>Pharma</title>
   <link rel="icon" type="image/x-icon" href="{{ asset('frontend/image/favicon.jpg') }}">
 

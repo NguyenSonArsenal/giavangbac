@@ -20,7 +20,7 @@ Route::get('dk-stats', 'App\Http\Controllers\Frontend\StatsController@index');
 Route::get('dk-server', [ServerMonitorController::class, 'index']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/jenkin', [HomeController::class, 'jenkin'])->name('home');
+Route::get('/jenkin', [HomeController::class, 'jenkin'])->name('jenkin');
 
 // ── Trang giá bạc theo thương hiệu ──
 Route::get('/gia-bac-phu-quy',      [BrandSilverController::class, 'phuquy'])->name('gia-bac.phuquy');

@@ -12,10 +12,10 @@ class FetchAllGoldPrice extends Command
     public function handle(): int
     {
         $commands = [
-            'gold:fetch-btmc',
+//            'gold:fetch-btmc',
             'gold:fetch-btmh',
             'gold:fetch-phuquy',
-            'gold:fetch-sjc',
+//            'gold:fetch-sjc',
         ];
 
         foreach ($commands as $cmd) {

@@ -10,26 +10,32 @@ use Carbon\Carbon;
  * Kéo dữ liệu bảng metal_prices từ DB server về local theo ngày.
  *
  * Cách dùng:
- *   php artisan db:sync-remote                      → đồng bộ hôm nay
- *   php artisan db:sync-remote --date=2026-04-13    → 1 ngày cụ thể
- *   php artisan db:sync-remote --days=7             → 7 ngày gần nhất
+ *   php artisan db:sync-remote                          → đồng bộ hôm nay
+ *   php artisan db:sync-remote 2026-05-01 2026-05-31    → sync khoảng từ ngày A đến ngày B
+ *   php artisan db:sync-remote 2026-05-01               → sync từ ngày A đến hôm nay
+ *   php artisan db:sync-remote --date=2026-04-13        → 1 ngày cụ thể
+ *   php artisan db:sync-remote --days=7                 → 7 ngày gần nhất
  *   php artisan db:sync-remote --date=2026-04-10 --date=2026-04-11  → nhiều ngày
- *   php artisan db:sync-remote --dry-run            → xem trước, không insert
+ *   php artisan db:sync-remote --dry-run                → xem trước, không insert
  *
  * # Sync hôm nay (mặc định)
  * php artisan db:sync-remote
+ * # Sync khoảng ngày (A → B)
+ * php artisan db:sync-remote 2026-05-01 2026-05-31
+ * # Sync từ ngày A đến hôm nay
+ * php artisan db:sync-remote 2026-05-01
  * # Sync 1 ngày cụ thể
  * php artisan db:sync-remote --date=2026-04-13
  * # Sync nhiều ngày
  * php artisan db:sync-remote --date=2026-04-10 --date=2026-04-11 --date=2026-04-12
  * # Sync 7 ngày gần nhất
  * php artisan db:sync-remote --days=7
- * # Chỉ sync vàng
- * php artisan db:sync-remote --date=2026-04-13 --metal=gold
+ * # Chỉ sync vàng trong khoảng ngày
+ * php artisan db:sync-remote 2026-05-01 2026-05-31 --metal=gold
  * # Chỉ sync bạc Phú Quý
  * php artisan db:sync-remote --days=3 --metal=silver --source=phuquy
  * # Xem trước (không ghi DB)
- * php artisan db:sync-remote --days=7 --dry-run
+ * php artisan db:sync-remote 2026-05-01 2026-05-31 --dry-run
  * # Ghi đè bản ghi đã tồn tại
  * php artisan db:sync-remote --date=2026-04-13 --force
  *
@@ -38,6 +44,8 @@ use Carbon\Carbon;
 class SyncFromRemoteDb extends Command
 {
     protected $signature = 'db:sync-remote
+                            {from?         : Ngày bắt đầu khoảng sync (Y-m-d). Nếu chỉ truyền from thì sync từ from đến hôm nay}
+                            {to?           : Ngày kết thúc khoảng sync (Y-m-d). Dùng kèm with from}
                             {--date=*      : Ngày cụ thể cần sync (Y-m-d), có thể truyền nhiều lần}
                             {--days=       : Sync N ngày gần nhất (thay thế --date)}
                             {--metal=      : Lọc theo metal_type: gold | silver | all (mặc định: all)}
@@ -179,11 +187,54 @@ class SyncFromRemoteDb extends Command
     /**
      * Tính danh sách ngày cần sync từ các option.
      *
+     * Thứ tự ưu tiên:
+     *   1. Argument positional: from [to]  → khoảng ngày A–B
+     *   2. --days=N                        → N ngày gần nhất
+     *   3. --date=... (nhiều lần)          → danh sách ngày cụ thể
+     *   4. Mặc định                        → hôm nay
+     *
      * @return string[]  VD: ['2026-04-13', '2026-04-14']
      */
     private function resolveDates(): array
     {
-        // Ưu tiên --days=N → N ngày gần nhất kể từ hôm nay
+        // ── Ưu tiên 1: argument positional from [to] ─────────────────────────
+        $fromArg = $this->argument('from');
+        if ($fromArg) {
+            try {
+                $from = Carbon::createFromFormat('Y-m-d', $fromArg)->startOfDay();
+            } catch (\Exception) {
+                $this->error("Ngày 'from' không hợp lệ: {$fromArg} (định dạng Y-m-d, VD: 2026-05-01)");
+                return [];
+            }
+
+            $toArg = $this->argument('to');
+            if ($toArg) {
+                try {
+                    $to = Carbon::createFromFormat('Y-m-d', $toArg)->startOfDay();
+                } catch (\Exception) {
+                    $this->error("Ngày 'to' không hợp lệ: {$toArg} (định dạng Y-m-d, VD: 2026-05-31)");
+                    return [];
+                }
+            } else {
+                // Chỉ có from → sync từ from đến hôm nay
+                $to = Carbon::today();
+            }
+
+            if ($from->gt($to)) {
+                $this->error("Ngày 'from' ({$from->toDateString()}) phải nhỏ hơn hoặc bằng 'to' ({$to->toDateString()})");
+                return [];
+            }
+
+            $dates = [];
+            $cursor = $from->copy();
+            while ($cursor->lte($to)) {
+                $dates[] = $cursor->format('Y-m-d');
+                $cursor->addDay();
+            }
+            return $dates;
+        }
+
+        // ── Ưu tiên 2: --days=N → N ngày gần nhất kể từ hôm nay ─────────────
         if ($days = $this->option('days')) {
             $days = (int) $days;
             if ($days <= 0) {
@@ -197,7 +248,7 @@ class SyncFromRemoteDb extends Command
             return $dates;
         }
 
-        // Fallback: --date (có thể truyền nhiều lần)
+        // ── Ưu tiên 3: --date (có thể truyền nhiều lần) ──────────────────────
         $dateOptions = (array) $this->option('date');
         $dateOptions = array_filter($dateOptions); // bỏ giá trị rỗng
 
@@ -213,7 +264,7 @@ class SyncFromRemoteDb extends Command
             return array_unique($dates);
         }
 
-        // Mặc định: hôm nay
+        // ── Mặc định: hôm nay ─────────────────────────────────────────────────
         return [Carbon::today()->format('Y-m-d')];
     }
 }

@@ -19,12 +19,11 @@ class Kernel extends ConsoleKernel
 		\App\Console\Commands\FetchGoldBtmh::class,
 		\App\Console\Commands\FetchGoldPhuquy::class,
 		\App\Console\Commands\FetchAllGoldPrice::class,
-		\App\Console\Commands\FetchGoldSjc::class,
-		\App\Console\Commands\FetchGoldSjc::class,
+//		\App\Console\Commands\FetchGoldSjc::class,
 		\App\Console\Commands\SeedGoldBtmh::class,
 		\App\Console\Commands\SyncFromRemoteDb::class,
 		// ── Crypto Signal Scanner ──
-		\App\Console\Commands\ScanCryptoSignal::class,
+//		\App\Console\Commands\ScanCryptoSignal::class,
 //		\App\Console\Commands\EvaluateCryptoSignal::class,
 	];
 
@@ -81,21 +80,21 @@ class Kernel extends ConsoleKernel
             ->at('8:35')
             ->withoutOverlapping();
 
-        // ── Giá Vàng BTMC ────────────────────────────────────────────────────
-        $schedule->command('gold:fetch-btmc')
-            ->everyTenMinutes()
-            ->between('8:00', '19:00')
-            ->withoutOverlapping();
-
-        $schedule->command('gold:fetch-btmc')
-            ->weekdays()
-            ->at('8:35')
-            ->withoutOverlapping();
-
-        $schedule->command('gold:fetch-btmc')
-            ->saturdays()
-            ->at('8:35')
-            ->withoutOverlapping();
+        // ── Giá Vàng BTMC ──────────────────────────── [TẠM DỪNG: IP VPS bị block]
+//        $schedule->command('gold:fetch-btmc')
+//            ->everyTenMinutes()
+//            ->between('8:00', '19:00')
+//            ->withoutOverlapping();
+//
+//        $schedule->command('gold:fetch-btmc')
+//            ->weekdays()
+//            ->at('8:35')
+//            ->withoutOverlapping();
+//
+//        $schedule->command('gold:fetch-btmc')
+//            ->saturdays()
+//            ->at('8:35')
+//            ->withoutOverlapping();
 
         // ── Giá Vàng BTMH (Bảo Tín Mạnh Hải) ──────────────────────────────────
         $schedule->command('gold:fetch-btmh')
@@ -129,21 +128,21 @@ class Kernel extends ConsoleKernel
             ->at('8:35')
             ->withoutOverlapping();
 
-        // ── Giá Vàng SJC (sjc.com.vn) ────────────────────────────────
-        $schedule->command('gold:fetch-sjc')
-            ->everyTenMinutes()
-            ->between('8:00', '19:00')
-            ->withoutOverlapping();
-
-        $schedule->command('gold:fetch-sjc')
-            ->weekdays()
-            ->at('8:35')
-            ->withoutOverlapping();
-
-        $schedule->command('gold:fetch-sjc')
-            ->saturdays()
-            ->at('8:35')
-            ->withoutOverlapping();
+        // ── Giá Vàng SJC (sjc.com.vn) ─────────────── [TẠM DỪNG: Cloudflare WAF block]
+//        $schedule->command('gold:fetch-sjc')
+//            ->everyTenMinutes()
+//            ->between('8:00', '19:00')
+//            ->withoutOverlapping();
+//
+//        $schedule->command('gold:fetch-sjc')
+//            ->weekdays()
+//            ->at('8:35')
+//            ->withoutOverlapping();
+//
+//        $schedule->command('gold:fetch-sjc')
+//            ->saturdays()
+//            ->at('8:35')
+//            ->withoutOverlapping();
 
         // ── AI Nhận định xu hướng giá bạc ────────────────────────────────────
         // Chạy 1 lần/ngày lúc 19:30 (sau khi thị trường đóng, có đủ giá cả ngày)

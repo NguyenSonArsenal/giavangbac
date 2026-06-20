@@ -5,12 +5,29 @@ use App\Http\Controllers\Frontend\BrandSilverController;
 use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\MailController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\TestController;
 use App\Http\Controllers\Frontend\ToolController;
 use App\Http\Controllers\Frontend\ServerMonitorController;
 use Illuminate\Support\Facades\Route;
+
+
+//Route::get('/test-send-mail', function () {
+//    $to = request('to', 'test@example.com');
+//    try {
+//        \Illuminate\Support\Facades\Mail::raw('Hi, this is a test email from banghang.net!', function ($message) use ($to) {
+//            $message->to($to)
+//                ->subject('Test Email from banghang.net');
+//        });
+//        return 'Email sent successfully to ' . $to . '!';
+//    } catch (\Exception $e) {
+//        return 'Error sending email: ' . $e->getMessage();
+//    }
+//});
+
+Route::get('mail', [MailController::class, 'index']);
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
